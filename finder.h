@@ -14,9 +14,10 @@
 #include <memory>
 #include <utility>
 #include <algorithm>
-#include "partinfo.h"
+#include "singlepart.h"
+#include "assembly.h"
 
-class PartInfo;
+class SinglePart;
 
 class Finder : public QObject
 {
@@ -36,7 +37,7 @@ public:
     }
 
     void abort();
-    QList<PartInfo*> & getPartList() { return m_partList; }
+    QList<Part*> & getPartList() { return m_partList; }
     QString getOrderNumber() { return m_orderNumber; }
     QString getDeliveryDate() { return m_deliveryDate; }
     QString getClient() { return m_client; }
@@ -50,7 +51,7 @@ public slots:
     void loadFileList();
 
 private:
-    QList<PartInfo*> m_partList;
+    QList<Part*> m_partList;
     QString m_schedulePath;
     QString m_searchedFolder;
     bool m_abort;
@@ -61,12 +62,12 @@ private:
     QStringList m_S235JRG2;
     QStringList m_S355J2G3;
     QStringList m_StainlessSteel;
-    int m_lastColumn;
     bool rowCount(QXlsx::Document & schedule, int &lastRow);
+    bool columnCount(QXlsx::Document & schedule, int &lastColumn);
     bool checkSchedule(QXlsx::Document & schedule);
     QString findFilePath(const QString & filename);
     void showPartList();
-    void sortPartList();
+    //void sortPartList();
     QStringList getItemsFromFile(QString fileName);
     QString defineMaterial(QString material);
 };

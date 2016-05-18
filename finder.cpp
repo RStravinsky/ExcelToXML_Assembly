@@ -10,19 +10,29 @@ void Finder::showPartList()
 {
     qDebug() << "------------------------PART LIST---------------------------";
     for(auto elem : m_partList) {
-        qDebug() << elem->getDrawingNumber() << " - " << elem->getMaterial() << " - " << elem->getThickness() << " - " << elem->getFilePath();
-        for(auto machine : elem->getMachineList()) { qDebug() << machine; }
+        SinglePart* singlePart = dynamic_cast<SinglePart*>(elem);
+        if(singlePart!=NULL) {
+            qDebug() << "M: " << singlePart->getNumber() << " - "
+                              << singlePart->getDrawingNumber() << " - "
+                              << singlePart->getQuantity() << " - "
+                              << singlePart->getMaterial() << " - "
+                              << singlePart->getThickness() << " - "
+                              << singlePart->getFilePath();
+            for(auto machine : singlePart->getMachineList()) { qDebug() << machine; }
+        }
+        else
+            qDebug() << "Z: " << elem->getNumber() << elem->getDrawingNumber() << " - " << elem->getQuantity() << " - " << dynamic_cast<Assembly*>(elem)->getWeight() ;
     }
     qDebug() << "------------------------END PART LIST---------------------------";
 }
 
-void Finder::sortPartList()
-{
-    qSort(m_partList.begin(), m_partList.end(),
-          [](PartInfo * part1, PartInfo * part2) {
-                return (part1->getDrawingNumber() < part2->getDrawingNumber());
-    });
-}
+//void Finder::sortPartList()
+//{
+//    qSort(m_partList.begin(), m_partList.end(),
+//          [](SinglePart * part1, SinglePart * part2) {
+//                return (part1->getDrawingNumber() < part2->getDrawingNumber());
+//    });
+//}
 
 QStringList Finder::getItemsFromFile(QString fileName)
 {
@@ -71,15 +81,14 @@ void Finder::loadFileList()
         m_orderNumber = schedule.cellAt(1,9)->value().toString();
         m_deliveryDate = schedule.cellAt(3,4)->dateTime().toString("yyyyMMdd");
         m_client = schedule.cellAt(2,7)->value().toString();
+        qDebug() << m_orderNumber << m_deliveryDate << m_client << endl;
+    }
 
-        for(int i = 1; i < 65536; ++i) {
-            if(schedule.cellAt(6,i)->value().toString().contains("Koniec")) {
-                m_lastColumn = i - 1;
-                break;
-            }
-        }
-
-        qDebug() << m_orderNumber << m_deliveryDate << m_client << m_lastColumn;
+    // find last column of scheudle
+    int lastColumn = 0;
+    if(!columnCount(schedule,lastColumn)) {
+        emit finished(false, "Harmonogram niepoprawnie sformatowany."); // failed
+        return;
     }
 
     // find last row of schedule
@@ -98,11 +107,13 @@ void Finder::loadFileList()
             return;
         }
 
+
         QString drawingNumber = schedule.cellAt(row, 3)->value().toString();
         if(drawingNumber.isEmpty()){
             emit finished(false,"Brak nazwy rysunku.");
             return;
         }
+
         QString dxfPath = findFilePath(schedule.cellAt(row, 3)->value().toString());
         QString material =  defineMaterial(schedule.cellAt(row, 8)->value().toString());
         if(material.isEmpty()) {
@@ -110,24 +121,40 @@ void Finder::loadFileList()
             return;
         }
 
-        m_partList.push_back(new PartInfo(drawingNumber, material, schedule.cellAt(row, 11)->value().toDouble(), schedule.cellAt(row, 5)->value().toInt(), dxfPath)); // TODO: Add thickness reading !!
+        int number = schedule.cellAt(row, 2)->value().toString().replace(".","").toInt();
+//        if(number.isEmpty()){
+//            emit finished(false,"Brak liczby porządkowej dla rysunku: "+schedule.cellAt(row, 3)->value().toString()+"");
+//            return;
+//        }
 
-        for(int i = 12; i <= m_lastColumn; ++i) {
-            if(schedule.cellAt(row, i)->value().toString().contains("X", Qt::CaseInsensitive)) {
-                m_partList.back()->addMachine(schedule.cellAt(6, i)->value().toString());
-            }
-        }
-
-        if(m_partList.back()->getMachineList().isEmpty()){
-            emit finished(false,"Nie dopasowano maszyny dla rysunku: "+schedule.cellAt(row, 3)->value().toString()+"");
+        QString partType = schedule.cellAt(row, 1)->value().toString();
+        if(partType.isEmpty()){
+            emit finished(false,"Brak rodzaju dla rysunku: "+schedule.cellAt(row, 3)->value().toString()+"");
             return;
+        }
+        if(partType == "Z")
+            m_partList.push_back(new Assembly(number, drawingNumber, 230.30, schedule.cellAt(row, 5)->value().toInt()));
+        else if(partType == "M") {
+            SinglePart * sp = new SinglePart(number, drawingNumber, material, schedule.cellAt(row, 11)->value().toDouble(), schedule.cellAt(row, 5)->value().toInt(), dxfPath);
+
+            for(int i = 12; i <= lastColumn; ++i) {
+                if(schedule.cellAt(row, i)->value().toString().contains("X", Qt::CaseInsensitive)) {
+                    sp->addMachine(schedule.cellAt(6, i)->value().toString());
+                }
+            }
+            if(sp->getMachineList().isEmpty()){
+                emit finished(false,"Nie dopasowano maszyny dla rysunku: "+schedule.cellAt(row, 3)->value().toString()+"");
+                return;
+            }
+            m_partList.push_back(sp); // TODO: Add thickness reading !!
+
         }
 
         emit addItemToListWidget(schedule.cellAt(row, 3)->value().toString(), !dxfPath.isEmpty());
         emit signalProgress(int((double(row)/double(lastRow)*100))+1, "Tworzenie listy części ...");
     }
 
-    sortPartList();
+    //sortPartList();
     showPartList();
     emit finished(true); // success
 }
@@ -150,6 +177,25 @@ bool Finder::rowCount(QXlsx::Document &schedule, int & lastRow)
             }
         }
     }
+
+    if(lastRow == 0)
+        return false;
+
+    return true;
+}
+
+bool Finder::columnCount(QXlsx::Document &schedule, int &lastColumn)
+{
+    for(int i = 1; i < 65536; ++i) {
+        qDebug() << schedule.cellAt(6,i)->value().toString() << endl;
+         if(schedule.cellAt(6,i)->value().toString().contains("Koniec")) {
+            lastColumn = i - 1;
+            break;
+        }
+    }
+
+    if(lastColumn == 0)
+        return false;
 
     return true;
 }

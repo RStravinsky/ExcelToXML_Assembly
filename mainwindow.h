@@ -38,12 +38,11 @@ private:
     QString m_schedulePath;
     bool m_processing{false};
     bool m_isUpload;
-    void createCommandTag(std::unique_ptr<QXmlStreamWriter> &xml, PartInfo * partInfo, int counter);
+    void createCommandTag(std::unique_ptr<QXmlStreamWriter> &xml, Part *part, int counter);
     bool createXML();
     QStringList getItemsFromFile(QString fileName);
     void generatePartList();
     void setProcessing(bool isEnabled);
-
 };
 
 #endif // MAINWINDOW_H

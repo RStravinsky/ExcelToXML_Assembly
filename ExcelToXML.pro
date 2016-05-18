@@ -16,11 +16,15 @@ CONFIG += debug
 SOURCES += main.cpp\
         mainwindow.cpp \
     finder.cpp \
-    partinfo.cpp
+    part.cpp \
+    singlepart.cpp \
+    assembly.cpp
 
 HEADERS  += mainwindow.h \
     finder.h \
-    partinfo.h
+    part.h \
+    singlepart.h \
+    assembly.h
 
 FORMS    += mainwindow.ui
 
