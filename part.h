@@ -10,17 +10,14 @@ public:
     explicit Part(const QString & drawingNumber, const int & quantity, const QString & number, QObject *parent = 0) :
         m_drawingNumber(drawingNumber), m_quantity(quantity), m_number(number), QObject(parent){}
     Part(){}
-    QString getDrawingNumber() { return m_drawingNumber; }
-    int getQuantity() { return m_quantity; }
-    QString getNumber() { return m_number; }
+    QString getDrawingNumber() const { return m_drawingNumber; }
+    int getQuantity() const { return m_quantity; }
+    QString getNumber() const { return m_number; }
+
+private:
     QString m_drawingNumber;
     int m_quantity;
     QString m_number;
-
-signals:
-
-public slots:
-
 };
 
 #endif // PART_H

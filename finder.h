@@ -16,7 +16,6 @@
 #include <algorithm>
 #include "singlepart.h"
 #include "assembly.h"
-#include "treemodel.h"
 
 class SinglePart;
 
@@ -25,7 +24,7 @@ class Finder : public QObject
     Q_OBJECT
 
 public:
-    explicit Finder(QObject *parent, const QString & schedulePath, const QString & searchedFolder = QString("//K1/Produkcja/TECHNOLODZY/BAZA DO TXT/txt/PLA/")) :
+    explicit Finder(QObject *parent, const QString & schedulePath, const QString & searchedFolder = QString("//K1/Produkcja/TECHNOLODZY/BAZA DO TXT/txt/")) :
         QObject(parent), m_schedulePath(schedulePath), m_searchedFolder(searchedFolder)
     {
         m_abort = false;
@@ -38,10 +37,10 @@ public:
     }
 
     void abort();
-    QList<Part*> & getPartList() { return m_partList; }
-    QString getOrderNumber() { return m_orderNumber; }
-    QString getDeliveryDate() { return m_deliveryDate; }
-    QString getClient() { return m_client; }
+    QList<std::shared_ptr<Part>> & getPartList() { return m_partList; }
+    QString getOrderNumber() const { return m_orderNumber; }
+    QString getDeliveryDate() const { return m_deliveryDate; }
+    QString getClient() const { return m_client; }
 
 signals:
     void signalProgress(int, QString);
@@ -53,11 +52,10 @@ public slots:
 
 private:
     QXlsx::Document * m_schedule;
-    QList<Part*> m_partList;
+    QList<std::shared_ptr<Part>> m_partList;
     QString m_schedulePath;
     QString m_searchedFolder;
     bool m_abort;
-    int filesCounter;
     int m_lastRow;
     int m_lastColumn;
     QString m_orderNumber;
@@ -66,18 +64,19 @@ private:
     QStringList m_S235JRG2;
     QStringList m_S355J2G3;
     QStringList m_StainlessSteel;
+
     bool rowCount(int &lastRow);
     bool columnCount(int &lastColumn);
     bool checkSchedule();
-    QString findFilePath(const QString & filename);
+    QString findFilePath(const QString &filename);
     void showPartList();
+    QStringList getItemsFromFile(const QString &fileName);
+    QString defineMaterial(const QString &material);
     //void sortPartList();
-    QStringList getItemsFromFile(QString fileName);
-    QString defineMaterial(QString material);
 
-    QList<Part*> makeAssemblyList(QString previousNumber, int &currentRow);
-    SinglePart *createSinglePart(int &currentRow);
-    Assembly *createAssembly(int &currentRow);
+    QList<std::shared_ptr<Part> > makeAssemblyList(QString previousNumber, int &currentRow);
+    std::shared_ptr<SinglePart> createSinglePart(int &currentRow);
+    std::shared_ptr<Assembly> createAssembly(int &currentRow);
 };
 
 #endif // FINDER_H

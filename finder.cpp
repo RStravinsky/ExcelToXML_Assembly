@@ -10,8 +10,8 @@ void Finder::showPartList()
 {
     qDebug() << "------------------------PART LIST---------------------------";
     for(auto elem : m_partList) {
-        SinglePart* singlePart = dynamic_cast<SinglePart*>(elem);
-        if(singlePart!=NULL) {
+        std::shared_ptr<SinglePart> singlePart = std::dynamic_pointer_cast<SinglePart>(elem);
+        if(singlePart!=nullptr) {
             qDebug() << "M: " << singlePart->getNumber() << " - "
                               << singlePart->getDrawingNumber() << " - "
                               << singlePart->getQuantity() << " - "
@@ -21,7 +21,7 @@ void Finder::showPartList()
             for(auto machine : singlePart->getMachineList()) { qDebug() << machine; }
         }
         else
-            qDebug() << "Z: " << elem->getNumber() << elem->getDrawingNumber() << " - " << elem->getQuantity() << " - " << dynamic_cast<Assembly*>(elem)->getWeight() ;
+            qDebug() << "Z: " << elem->getNumber() << elem->getDrawingNumber() << " - " << elem->getQuantity() << " - " << std::dynamic_pointer_cast<Assembly>(elem)->getWeight() ;
     }
     qDebug() << "------------------------END PART LIST---------------------------";
 }
@@ -34,7 +34,7 @@ void Finder::showPartList()
 //    });
 //}
 
-QStringList Finder::getItemsFromFile(QString fileName)
+QStringList Finder::getItemsFromFile(const QString &fileName)
 {
     QStringList list;
     QFile file(QDir::currentPath() + "\\" + fileName);
@@ -56,7 +56,7 @@ QStringList Finder::getItemsFromFile(QString fileName)
     return list;
 }
 
-QString Finder::defineMaterial(QString material)
+QString Finder::defineMaterial(const QString & material)
 {
     if(std::any_of(m_S235JRG2.begin(),m_S235JRG2.end(), [material](QString elem){ return material.contains(elem);}))
         return QString("S235JRG2");
@@ -100,12 +100,12 @@ void Finder::loadFileList()
         }
 
         QString partType = m_schedule->cellAt(currentRow, 1)->value().toString();
-        if(!partType.isEmpty() && partType == "Z"){
+        if(!partType.isEmpty() && partType == "Z") {
 
-            Assembly * assembly = createAssembly(currentRow);
+            std::shared_ptr<Assembly> assembly(std::move(createAssembly(currentRow)));
             if(assembly==nullptr)
                 return;
-            m_partList.push_back(assembly);
+            m_partList.push_back(std::move(assembly));
 
         }
         else {
@@ -118,9 +118,9 @@ void Finder::loadFileList()
     emit finished(true); // success
 }
 
-QList<Part*> Finder::makeAssemblyList(QString previousNumber, int &currentRow)
+QList<std::shared_ptr<Part>> Finder::makeAssemblyList(QString previousNumber, int &currentRow)
 {
-    QList<Part*> partList;
+    QList<std::shared_ptr<Part>> partList;
     QString number = m_schedule->cellAt(currentRow, 2)->value().toString().replace(".","");
 
     while( number.left(previousNumber.length()) == previousNumber ) {
@@ -132,21 +132,21 @@ QList<Part*> Finder::makeAssemblyList(QString previousNumber, int &currentRow)
 
         QString partType = m_schedule->cellAt(currentRow, 1)->value().toString();
         if(partType == "Z") {
-            Assembly * assembly = createAssembly(currentRow);
+            std::shared_ptr<Assembly> assembly(std::move(createAssembly(currentRow)));
             if(assembly==nullptr) {
                 abort();
                 break;
             }
-            partList.push_back(assembly);
+            partList.push_back(std::move(assembly));
         }
 
         else if(partType == "M") {
-            SinglePart * singlePart = createSinglePart(currentRow);
+            std::shared_ptr<SinglePart> singlePart(std::move(createSinglePart(currentRow)));
             if(singlePart==nullptr) {
                 abort();
                 break;
             }
-            partList.push_back(singlePart);
+            partList.push_back(std::move(singlePart));
             ++currentRow;
         }
 
@@ -157,7 +157,7 @@ QList<Part*> Finder::makeAssemblyList(QString previousNumber, int &currentRow)
     return partList;
 }
 
-Assembly * Finder::createAssembly(int &currentRow)
+std::shared_ptr<Assembly> Finder::createAssembly(int &currentRow)
 {
     QString number = m_schedule->cellAt(currentRow, 2)->value().toString().replace(".","");
 
@@ -179,14 +179,13 @@ Assembly * Finder::createAssembly(int &currentRow)
         return nullptr;
     }
 
-    Assembly * assembly = new Assembly(number, drawingNumber, quantity, weight);
-    ++currentRow;
-    assembly->setSubPartList(makeAssemblyList(number,currentRow));
+    std::shared_ptr<Assembly> assembly = std::make_shared<Assembly>(number, drawingNumber, quantity, weight);
+    assembly->setSubPartList(makeAssemblyList(number,++currentRow));
 
     return assembly;
 }
 
-SinglePart *Finder::createSinglePart(int &currentRow)
+std::shared_ptr<SinglePart> Finder::createSinglePart(int &currentRow)
 {
     QString number = m_schedule->cellAt(currentRow, 2)->value().toString().replace(".","");
 
@@ -216,7 +215,7 @@ SinglePart *Finder::createSinglePart(int &currentRow)
         return nullptr;
     }
 
-    SinglePart * singlePart = new SinglePart(number,drawingNumber,quantity,material,thickness,dxfPath);
+    std::shared_ptr<SinglePart> singlePart = std::make_shared<SinglePart>(number,drawingNumber,quantity,material,thickness,dxfPath);
     for(int i = 12; i <= m_lastColumn; ++i) {
         if(m_schedule->cellAt(currentRow, i)->value().toString().contains("X", Qt::CaseInsensitive)) {
             singlePart->addMachine(m_schedule->cellAt(6, i)->value().toString());
@@ -267,7 +266,7 @@ QString Finder::findFilePath(const QString & filename)
 {
     QDir dir(m_searchedFolder, QString("*.dxf"), QDir::NoSort, QDir::Files | QDir::NoSymLinks);
     QDirIterator counterIt(dir, QDirIterator::Subdirectories);
-    filesCounter = 0;
+    unsigned int filesCounter = 0;
     while (counterIt.hasNext()) {
 
             bool abort = m_abort;

@@ -2,7 +2,7 @@
 
 QStringList SinglePart::cut2DList(QStringList() << "Durma Laser" << "Eckert" << "Zakmet");
 
-QString SinglePart::defineTechnology(QString machine)
+QString SinglePart::defineTechnology(const QString &machine)
 {
     if(cut2DList.contains(machine,Qt::CaseInsensitive))
         return QString("2D Cut");

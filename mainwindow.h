@@ -35,12 +35,11 @@ private:
     Ui::MainWindow *ui;
     QThread * m_finderThread{nullptr};
     Finder * m_finder{nullptr};
-    QString m_schedulePath;
     bool m_processing{false};
     bool m_isUpload;
-    void createCommandTag(std::unique_ptr<QXmlStreamWriter> &xml, Part *part, int counter);
+    void createCommandTag(std::unique_ptr<QXmlStreamWriter> &xml, std::shared_ptr<Part> part, int counter);
     bool createXML();
-    QStringList getItemsFromFile(QString fileName);
+    QStringList getItemsFromFile(const QString &fileName);
     void generatePartList();
     void setProcessing(bool isEnabled);
 };

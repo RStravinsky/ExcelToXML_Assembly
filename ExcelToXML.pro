@@ -18,17 +18,13 @@ SOURCES += main.cpp\
     finder.cpp \
     part.cpp \
     singlepart.cpp \
-    assembly.cpp \
-    treemodel.cpp \
-    treeitem.cpp
+    assembly.cpp
 
 HEADERS  += mainwindow.h \
     finder.h \
     part.h \
     singlepart.h \
-    assembly.h \
-    treemodel.h \
-    treeitem.h
+    assembly.h
 
 FORMS    += mainwindow.ui
 

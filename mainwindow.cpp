@@ -47,8 +47,7 @@ void MainWindow::on_excelPathBtn_released()
     if(!m_processing){
         QString path = QFileDialog::getOpenFileName(this,tr("Wybierz harmonogram"), "//k1/Produkcja/TECHNOLODZY/", tr("Excel (*.xlsx)"));
 
-        if(!path.isEmpty()) { // TODO - prevent loading existing schedule
-            m_schedulePath = path;
+        if(!path.isEmpty()) {
             ui->excelPathLe->setText(path);
             generatePartList();
         }
@@ -141,109 +140,109 @@ void MainWindow::on_convertButton_released()
     }
 }
 
-void MainWindow::createCommandTag(std::unique_ptr<QXmlStreamWriter> &xml, Part *part, int counter)
+void MainWindow::createCommandTag(std::unique_ptr<QXmlStreamWriter> &xml, std::shared_ptr<Part> part, int counter)
 {
-    static int previousNumber;
-    QString currentNumber = part->getNumber();
-    QStringList TblRef(QStringList() << "PRODUCTS" << "PRODUCT OPERATIONS" << "IMPORTGEO" << "MANUFACTURING");
-    QStringList FldRefAssembly(QStringList()  << "PrdRef" << "PrdName" << "PCATEGORY" << "Assembly" << "Waga1Szt");
-    QStringList FldRefFirst(QStringList()  << "PrdRef" << "PrdRef" << "Product");
-    QStringList FldRefSecond(QStringList() << "MatRef" << "WrkRef" << "GeometryType");
-    QStringList FldRefThird(QStringList()  << "Height" << "OprRef" << "GeometryPath");
-    QStringList FldRefFourth(QStringList()  << "MnOID" << "PrdRefDst" << "OrdRef" << "ComName" << "RQ" << "DDate");
-    QStringList ManufacturingFields;
-    QStringList AssemblyFields;
-    QStringList FldRefProductComponents;
+//    static int previousNumber;
+//    QString currentNumber = part->getNumber();
+//    QStringList TblRef(QStringList() << "PRODUCTS" << "PRODUCT OPERATIONS" << "IMPORTGEO" << "MANUFACTURING");
+//    QStringList FldRefAssembly(QStringList()  << "PrdRef" << "PrdName" << "PCATEGORY" << "Assembly" << "Waga1Szt");
+//    QStringList FldRefFirst(QStringList()  << "PrdRef" << "PrdRef" << "Product");
+//    QStringList FldRefSecond(QStringList() << "MatRef" << "WrkRef" << "GeometryType");
+//    QStringList FldRefThird(QStringList()  << "Height" << "OprRef" << "GeometryPath");
+//    QStringList FldRefFourth(QStringList()  << "MnOID" << "PrdRefDst" << "OrdRef" << "ComName" << "RQ" << "DDate");
+//    QStringList ManufacturingFields;
+//    QStringList AssemblyFields;
+//    QStringList FldRefProductComponents;
 
-    // Create Assembly
-    Assembly * assembly = dynamic_cast<Assembly*>(part);
-    if(assembly != NULL)
-    {
-        AssemblyFields << assembly->getDrawingNumber() // PrdRef
-                       << "COLUMN/SLUP" // PrdName
-                       << "2" // PCATEGORY
-                       << "1" // Assembly
-                       << QString::number(assembly->getWeight()); // Waga1Szt
+//    // Create Assembly
+//    Assembly * assembly = dynamic_cast<Assembly*>(part);
+//    if(assembly != NULL)
+//    {
+//        AssemblyFields << assembly->getDrawingNumber() // PrdRef
+//                       << "COLUMN/SLUP" // PrdName
+//                       << "2" // PCATEGORY
+//                       << "1" // Assembly
+//                       << QString::number(assembly->getWeight()); // Waga1Szt
 
-        xml->writeStartElement("COMMAND");
-        xml->writeAttribute("Name","Import");
-        xml->writeAttribute("TblRef","PRODUCTS");
-        for(int i=0;i<FldRefAssembly.size();++i) {
-            xml->writeStartElement("FIELD");
-            xml->writeAttribute("FldRef",FldRefAssembly[i]);
-            xml->writeAttribute("FldValue",AssemblyFields[i]); // drawing number ALWAYS
-            xml->writeAttribute("FldType", (i==2) ? "60" : (i==3 ? "10" : "20"));
-            xml->writeEndElement();
-        }
-        xml->writeEndElement(); // Command
-    }
+//        xml->writeStartElement("COMMAND");
+//        xml->writeAttribute("Name","Import");
+//        xml->writeAttribute("TblRef","PRODUCTS");
+//        for(int i=0;i<FldRefAssembly.size();++i) {
+//            xml->writeStartElement("FIELD");
+//            xml->writeAttribute("FldRef",FldRefAssembly[i]);
+//            xml->writeAttribute("FldValue",AssemblyFields[i]); // drawing number ALWAYS
+//            xml->writeAttribute("FldType", (i==2) ? "60" : (i==3 ? "10" : "20"));
+//            xml->writeEndElement();
+//        }
+//        xml->writeEndElement(); // Command
+//    }
 
-    else {
+//    else {
 
-    SinglePart* singlePart = dynamic_cast<SinglePart*>(part);
+//    SinglePart* singlePart = dynamic_cast<SinglePart*>(part);
 
-        for(int i=0;i<3;++i) {
+//        for(int i=0;i<3;++i) {
 
-            int count = 1;
-            if(i==1)
-                count = singlePart->getMachineList().size();
+//            int count = 1;
+//            if(i==1)
+//                count = singlePart->getMachineList().size();
 
-            qDebug() << "Part: " << singlePart->getDrawingNumber() << endl;
+//            qDebug() << "Part: " << singlePart->getDrawingNumber() << endl;
 
-            do {
-                xml->writeStartElement("COMMAND");
+//            do {
+//                xml->writeStartElement("COMMAND");
 
-                xml->writeAttribute("Name","Import");
-                xml->writeAttribute("TblRef",TblRef[i]);
+//                xml->writeAttribute("Name","Import");
+//                xml->writeAttribute("TblRef",TblRef[i]);
 
-                // first line
-                xml->writeStartElement("Field");
-                xml->writeAttribute("FldRef",FldRefFirst[i]);
-                xml->writeAttribute("FldValue", singlePart->getDrawingNumber()); // drawing number ALWAYS
-                xml->writeAttribute("FldType", "20");
-                xml->writeEndElement();
+//                // first line
+//                xml->writeStartElement("Field");
+//                xml->writeAttribute("FldRef",FldRefFirst[i]);
+//                xml->writeAttribute("FldValue", singlePart->getDrawingNumber()); // drawing number ALWAYS
+//                xml->writeAttribute("FldType", "20");
+//                xml->writeEndElement();
 
-                // second line
-                xml->writeStartElement("Field");
-                xml->writeAttribute("FldRef",FldRefSecond[i]);
-                qDebug() << singlePart->getMachineList().at(singlePart->getMachineList().size()-count) << " ";
-                xml->writeAttribute("FldValue",(i==0) ? singlePart->getMaterial() : (i==1 ? singlePart->getMachineList().at(singlePart->getMachineList().size()-count) : "DXF")); // i=0 - TYPE , i=1 - MACHINE, i=2 = "DXF"
-                xml->writeAttribute("FldType","20");
-                xml->writeEndElement();
+//                // second line
+//                xml->writeStartElement("Field");
+//                xml->writeAttribute("FldRef",FldRefSecond[i]);
+//                qDebug() << singlePart->getMachineList().at(singlePart->getMachineList().size()-count) << " ";
+//                xml->writeAttribute("FldValue",(i==0) ? singlePart->getMaterial() : (i==1 ? singlePart->getMachineList().at(singlePart->getMachineList().size()-count) : "DXF")); // i=0 - TYPE , i=1 - MACHINE, i=2 = "DXF"
+//                xml->writeAttribute("FldType","20");
+//                xml->writeEndElement();
 
-                // third line
-                xml->writeStartElement("Field");
-                xml->writeAttribute("FldRef",FldRefThird[i]);
-                xml->writeAttribute("FldValue",(i==0) ? QString::number(singlePart->getThickness()) : (i==1 ? singlePart->getTechnologyList().at(singlePart->getTechnologyList().size()-count) : singlePart->getFilePath())); // i=0 - HEIGHT , i=1 - "2D CUT", i=2 = DXF PATH
-                xml->writeAttribute("FldType",(i==0) ? "100": "20");
-                xml->writeEndElement();
+//                // third line
+//                xml->writeStartElement("Field");
+//                xml->writeAttribute("FldRef",FldRefThird[i]);
+//                xml->writeAttribute("FldValue",(i==0) ? QString::number(singlePart->getThickness()) : (i==1 ? singlePart->getTechnologyList().at(singlePart->getTechnologyList().size()-count) : singlePart->getFilePath())); // i=0 - HEIGHT , i=1 - "2D CUT", i=2 = DXF PATH
+//                xml->writeAttribute("FldType",(i==0) ? "100": "20");
+//                xml->writeEndElement();
 
-                xml->writeEndElement(); // Command
+//                xml->writeEndElement(); // Command
 
-            }while(--count);
+//            }while(--count);
 
-            qDebug() << endl;
-        }
+//            qDebug() << endl;
+//        }
 
-        FldRefProductComponents << assembly->getDrawingNumber() // PrdRef
-                          << "COLUMN/SLUP" // PrdName
-                          << "2" // PCATEGORY
-                          << "1" // Assembly
-                          << QString::number(assembly->getWeight()); // Waga1Szt
+//        FldRefProductComponents << assembly->getDrawingNumber() // PrdRef
+//                          << "COLUMN/SLUP" // PrdName
+//                          << "2" // PCATEGORY
+//                          << "1" // Assembly
+//                          << QString::number(assembly->getWeight()); // Waga1Szt
 
-        xml->writeStartElement("COMMAND");
-        xml->writeAttribute("Name","Import");
-        xml->writeAttribute("TblRef","PRODUCTS COMPONENTS");
-        for(int i=0;i<FldRefAssembly.size();++i) {
-            xml->writeStartElement("FIELD");
-            xml->writeAttribute("FldRef",FldRefProductComponents[i]);
-            xml->writeAttribute("FldValue",AssemblyFields[i]); // drawing number ALWAYS
-            xml->writeAttribute("FldType", (i==2) ? "100" : "20");
-            xml->writeEndElement();
-        }
-        xml->writeEndElement(); // Command
+//        xml->writeStartElement("COMMAND");
+//        xml->writeAttribute("Name","Import");
+//        xml->writeAttribute("TblRef","PRODUCTS COMPONENTS");
+//        for(int i=0;i<FldRefAssembly.size();++i) {
+//            xml->writeStartElement("FIELD");
+//            xml->writeAttribute("FldRef",FldRefProductComponents[i]);
+//            xml->writeAttribute("FldValue",AssemblyFields[i]); // drawing number ALWAYS
+//            xml->writeAttribute("FldType", (i==2) ? "100" : "20");
+//            xml->writeEndElement();
+//        }
+//        xml->writeEndElement(); // Command
 
-    }
+//    }
 
 
 
@@ -402,7 +401,7 @@ void MainWindow::on_processingFinished(bool isSuccess, QString information)
     }
 }
 
-QStringList MainWindow::getItemsFromFile(QString fileName)
+QStringList MainWindow::getItemsFromFile(const QString &fileName)
 {
     QStringList list;
     QFile file(QDir::currentPath() + "\\" + fileName);
