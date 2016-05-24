@@ -144,7 +144,7 @@ void MainWindow::on_convertButton_released()
 void MainWindow::createCommandTag(std::unique_ptr<QXmlStreamWriter> &xml, Part *part, int counter)
 {
     static int previousNumber;
-    int currentNumber = part->getNumber();
+    QString currentNumber = part->getNumber();
     QStringList TblRef(QStringList() << "PRODUCTS" << "PRODUCT OPERATIONS" << "IMPORTGEO" << "MANUFACTURING");
     QStringList FldRefAssembly(QStringList()  << "PrdRef" << "PrdName" << "PCATEGORY" << "Assembly" << "Waga1Szt");
     QStringList FldRefFirst(QStringList()  << "PrdRef" << "PrdRef" << "Product");

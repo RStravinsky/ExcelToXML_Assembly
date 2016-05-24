@@ -7,12 +7,15 @@
 class SinglePart : public Part
 {
 public:
-    explicit SinglePart(const int & number,const QString & drawingNumber, const QString & material, double thickness, int quantity = 1, const QString & filePath = QString(), QObject *parent = 0) :
+    explicit SinglePart(const QString & number,const QString & drawingNumber, const int & quantity = 1, const QString & material = QString(), const double &thickness = 0, const QString & filePath = QString(), QObject *parent = 0) :
         m_material(material), m_thickness(thickness), m_filePath(filePath), Part(drawingNumber,quantity,number) {}
 
     QString getMaterial() { return m_material; }
+    void setMaterial(const QString & material) { m_material = material; }
     double getThickness() { return m_thickness; }
+    void setThickness(const double & thickness) { m_thickness = thickness; }
     QString getFilePath() { return m_filePath; }
+    void setFilePath(const QString & filePath) { m_filePath = filePath; }
     QStringList & getMachineList() { return m_machineList; }
     QStringList & getTechnologyList() { return m_technologyList; }
     void addMachine(const QString & machine) {
@@ -26,7 +29,6 @@ public slots:
 
 private:
     static QStringList cut2DList;
-    static QStringList benderList;
     QStringList m_technologyList;
     QString m_material;
     double m_thickness;

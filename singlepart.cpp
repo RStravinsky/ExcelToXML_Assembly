@@ -1,7 +1,6 @@
 #include "singlepart.h"
 
 QStringList SinglePart::cut2DList(QStringList() << "Durma Laser" << "Eckert" << "Zakmet");
-QStringList SinglePart::benderList(QStringList() << "Krawedziarka" << "Pila");
 
 QString SinglePart::defineTechnology(QString machine)
 {

@@ -16,6 +16,7 @@
 #include <algorithm>
 #include "singlepart.h"
 #include "assembly.h"
+#include "treemodel.h"
 
 class SinglePart;
 
@@ -51,25 +52,32 @@ public slots:
     void loadFileList();
 
 private:
+    QXlsx::Document * m_schedule;
     QList<Part*> m_partList;
     QString m_schedulePath;
     QString m_searchedFolder;
     bool m_abort;
     int filesCounter;
+    int m_lastRow;
+    int m_lastColumn;
     QString m_orderNumber;
     QString m_deliveryDate;
     QString m_client;
     QStringList m_S235JRG2;
     QStringList m_S355J2G3;
     QStringList m_StainlessSteel;
-    bool rowCount(QXlsx::Document & schedule, int &lastRow);
-    bool columnCount(QXlsx::Document & schedule, int &lastColumn);
-    bool checkSchedule(QXlsx::Document & schedule);
+    bool rowCount(int &lastRow);
+    bool columnCount(int &lastColumn);
+    bool checkSchedule();
     QString findFilePath(const QString & filename);
     void showPartList();
     //void sortPartList();
     QStringList getItemsFromFile(QString fileName);
     QString defineMaterial(QString material);
+
+    QList<Part*> makeAssemblyList(QString previousNumber, int &currentRow);
+    SinglePart *createSinglePart(int &currentRow);
+    Assembly *createAssembly(int &currentRow);
 };
 
 #endif // FINDER_H
