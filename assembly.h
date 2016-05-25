@@ -13,7 +13,7 @@ public:
 
     float getWeight() const { return m_weight; }
     void setSubPartList(const QList<std::shared_ptr<Part>> &list) { m_subpartsList = list; }
-    QList<std::shared_ptr<Part>> getSubpartList() const { return m_subpartsList; }
+    QList<std::shared_ptr<Part>> & getSubpartList() { return m_subpartsList; }
 
 private:
     float m_weight;

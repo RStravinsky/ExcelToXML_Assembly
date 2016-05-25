@@ -38,6 +38,11 @@ private:
     bool m_processing{false};
     bool m_isUpload;
     void createCommandTag(std::unique_ptr<QXmlStreamWriter> &xml, std::shared_ptr<Part> part, int counter);
+
+    void createAssemblyCommand(std::unique_ptr<QXmlStreamWriter> &xml, const std::shared_ptr<Assembly> &assembly);
+    void createPartCommand(std::unique_ptr<QXmlStreamWriter> &xml, const std::shared_ptr<SinglePart> &part);
+    void assignPartToAssembly(std::unique_ptr<QXmlStreamWriter> &xml, const QString &assemblyDrawingNumber, const std::shared_ptr<Part> &part);
+    void createXMLContent(std::unique_ptr<QXmlStreamWriter> &xml, const QString & assemblyDrawingNumber, QList<std::shared_ptr<Part>> &partsList);
     bool createXML();
     QStringList getItemsFromFile(const QString &fileName);
     void generatePartList();

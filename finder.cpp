@@ -109,7 +109,7 @@ void Finder::loadFileList()
 
         }
         else {
-            emit finished(false,"Brak rodzaju dla rysunku: "+ m_schedule->cellAt(currentRow, 3)->value().toString()+"");
+            emit finished(false,"Rysunek w wierszu: " + QString::number(currentRow) + " nie jest złożeniem.");
             return;
         }
     }

@@ -112,8 +112,8 @@ void MainWindow::on_convertButton_released()
                                  );
 
             msgBox.setWindowIcon(QIcon(":/images/images/icon.ico"));
-            QAbstractButton *myYesButton = msgBox.addButton(trUtf8("DXF+Marszruta"), QMessageBox::YesRole);
-            QAbstractButton *myNoButton = msgBox.addButton(trUtf8("Baza Lantek"), QMessageBox::NoRole);
+            QAbstractButton *myYesButton = msgBox.addButton(trUtf8("DXF+Marszruta"), QMessageBox::NoRole);
+            QAbstractButton *myNoButton = msgBox.addButton(trUtf8("Baza Lantek"), QMessageBox::YesRole);
             msgBox.setButtonText(QMessageBox::Close, tr("Zamknij"));
             msgBox.exec();
 
@@ -154,28 +154,6 @@ void MainWindow::createCommandTag(std::unique_ptr<QXmlStreamWriter> &xml, std::s
 //    QStringList AssemblyFields;
 //    QStringList FldRefProductComponents;
 
-//    // Create Assembly
-//    Assembly * assembly = dynamic_cast<Assembly*>(part);
-//    if(assembly != NULL)
-//    {
-//        AssemblyFields << assembly->getDrawingNumber() // PrdRef
-//                       << "COLUMN/SLUP" // PrdName
-//                       << "2" // PCATEGORY
-//                       << "1" // Assembly
-//                       << QString::number(assembly->getWeight()); // Waga1Szt
-
-//        xml->writeStartElement("COMMAND");
-//        xml->writeAttribute("Name","Import");
-//        xml->writeAttribute("TblRef","PRODUCTS");
-//        for(int i=0;i<FldRefAssembly.size();++i) {
-//            xml->writeStartElement("FIELD");
-//            xml->writeAttribute("FldRef",FldRefAssembly[i]);
-//            xml->writeAttribute("FldValue",AssemblyFields[i]); // drawing number ALWAYS
-//            xml->writeAttribute("FldType", (i==2) ? "60" : (i==3 ? "10" : "20"));
-//            xml->writeEndElement();
-//        }
-//        xml->writeEndElement(); // Command
-//    }
 
 //    else {
 
@@ -316,6 +294,113 @@ void MainWindow::createCommandTag(std::unique_ptr<QXmlStreamWriter> &xml, std::s
 
 }
 
+void MainWindow::createAssemblyCommand(std::unique_ptr<QXmlStreamWriter> &xml, const std::shared_ptr<Assembly> &assembly)
+{
+    QStringList fldRef( QStringList() << "PrdRef" << "PrdName" << "PCATEGORY" << "Assembly" << "Waga1Szt");
+    QStringList assemblyFields( QStringList() << assembly->getDrawingNumber() // PrdRef
+                                              << "COLUMN/SLUP" // PrdName
+                                              << "2" // PCATEGORY
+                                              << "1" // Assembly
+                                              << QString::number(assembly->getWeight())); // Waga1Szt
+    xml->writeStartElement("COMMAND");
+    xml->writeAttribute("Name","Import");
+    xml->writeAttribute("TblRef","PRODUCTS");
+    for(int i=0;i<fldRef.size();++i) {
+        xml->writeStartElement("FIELD");
+        xml->writeAttribute("FldRef",fldRef[i]);
+        xml->writeAttribute("FldValue",assemblyFields[i]);
+        xml->writeAttribute("FldType", (i==2) ? "60" : (i==3 ? "10" : "20"));
+        xml->writeEndElement();
+    }
+    xml->writeEndElement(); // Command
+}
+
+void MainWindow::createPartCommand(std::unique_ptr<QXmlStreamWriter> &xml, const std::shared_ptr<SinglePart> &part)
+{
+    QStringList fldRefFirst(QStringList()  << "PrdRef" << "PrdRef" << "Product");
+    QStringList fldRefSecond(QStringList() << "MatRef" << "WrkRef" << "GeometryType");
+    QStringList fldRefThird(QStringList()  << "Height" << "OprRef" << "GeometryPath");
+    QStringList tblRef(QStringList() << "PRODUCTS" << "PRODUCT OPERATIONS" << "IMPORTGEO" << "MANUFACTURING");
+
+    for(int i=0;i<3;++i) {
+
+        int count = 1;
+        if(i==1)
+            count = part->getMachineList().size();
+
+        qDebug() << "Part: " << part->getDrawingNumber() << endl;
+
+        do {
+            xml->writeStartElement("COMMAND");
+
+            xml->writeAttribute("Name","Import");
+            xml->writeAttribute("TblRef",tblRef[i]);
+
+            // first line
+            xml->writeStartElement("FIELD");
+            xml->writeAttribute("FldRef",fldRefFirst[i]);
+            xml->writeAttribute("FldValue", part->getDrawingNumber()); // drawing number ALWAYS
+            xml->writeAttribute("FldType", "20");
+            xml->writeEndElement();
+
+            // second line
+            xml->writeStartElement("FIELD");
+            xml->writeAttribute("FldRef",fldRefSecond[i]);
+            qDebug() << part->getMachineList().at(part->getMachineList().size()-count) << " ";
+            xml->writeAttribute("FldValue",(i==0) ? part->getMaterial() : (i==1 ? part->getMachineList().at(part->getMachineList().size()-count) : "DXF")); // i=0 - TYPE , i=1 - MACHINE, i=2 = "DXF"
+            xml->writeAttribute("FldType","20");
+            xml->writeEndElement();
+
+            // third line
+            xml->writeStartElement("FIELD");
+            xml->writeAttribute("FldRef",fldRefThird[i]);
+            xml->writeAttribute("FldValue",(i==0) ? QString::number(part->getThickness()) : (i==1 ? part->getTechnologyList().at(part->getTechnologyList().size()-count) : part->getFilePath())); // i=0 - HEIGHT , i=1 - "2D CUT", i=2 = DXF PATH
+            xml->writeAttribute("FldType",(i==0) ? "100": "20");
+            xml->writeEndElement();
+
+            xml->writeEndElement(); // Command
+
+        }while(--count);
+
+        qDebug() << endl;
+    }
+}
+
+void MainWindow::assignPartToAssembly(std::unique_ptr<QXmlStreamWriter> &xml, const QString & assemblyDrawingNumber, const std::shared_ptr<Part> &part)
+{
+    QStringList fldRef(QStringList() << "PrdRefOrg" << "PrdRefDst" << "PQUANT");
+    QStringList productCompontentsFields(QStringList() << assemblyDrawingNumber
+                                                       << part->getDrawingNumber()
+                                                       << "1");
+
+    xml->writeStartElement("COMMAND"); // assing part to assembly
+    xml->writeAttribute("Name","IMPORT");
+    xml->writeAttribute("TblRef","PRODUCT COMPONENTS");
+    for(int i=0;i<fldRef.size();++i) {
+        xml->writeStartElement("FIELD");
+        xml->writeAttribute("FldRef",fldRef[i]);
+        xml->writeAttribute("FldValue",productCompontentsFields[i]);
+        xml->writeAttribute("FldType", (i==2) ? "100": "20");
+        xml->writeEndElement();
+    }
+    xml->writeEndElement(); // Command
+}
+
+void MainWindow::createXMLContent(std::unique_ptr<QXmlStreamWriter> &xml, const QString &assemblyDrawingNumber, QList<std::shared_ptr<Part> > &partsList)
+{
+    for(auto &part: partsList) {
+        if(std::dynamic_pointer_cast<SinglePart>(part)!=nullptr) { // SinglePart
+            createPartCommand(xml,std::dynamic_pointer_cast<SinglePart>(part));
+        }
+        else { // Assembly
+            createAssemblyCommand(xml, std::dynamic_pointer_cast<Assembly>(part));
+            createXMLContent(xml,std::dynamic_pointer_cast<Assembly>(part)->getDrawingNumber(),std::dynamic_pointer_cast<Assembly>(part)->getSubpartList());
+        }
+
+        assignPartToAssembly(xml,assemblyDrawingNumber,part);
+    }
+}
+
 bool MainWindow::createXML()
 {
     QFile file(ui->xmlPathLe->text());
@@ -330,8 +415,10 @@ bool MainWindow::createXML()
     xmlWriter->writeStartDocument();
     xmlWriter->writeStartElement("DATAEX");
 
-    for(int i=0; i<m_finder->getPartList().size(); ++i)
-        createCommandTag(xmlWriter, m_finder->getPartList().at(i), i);
+    for(auto &assembly: m_finder->getPartList()) {
+        createAssemblyCommand(xmlWriter, assembly);
+        createXMLContent(xmlWriter, assembly->getDrawingNumber(), assembly->getSubpartList());
+    }
 
     xmlWriter->writeEndElement(); // Dataex
     xmlWriter->writeEndDocument();
