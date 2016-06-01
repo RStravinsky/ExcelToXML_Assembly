@@ -559,7 +559,7 @@ public:
 #ifndef QT_NO_WHATSTHIS
         searchPathLe->setWhatsThis(QString());
 #endif // QT_NO_WHATSTHIS
-        searchPathLe->setText(QString());
+        searchPathLe->setText(QApplication::translate("MainWindow", "//k1/Produkcja/TECHNOLODZY/BAZA DO TXT/txt/PLA", 0));
         searchPathBtn->setText(QApplication::translate("MainWindow", "...", 0));
 #ifndef QT_NO_TOOLTIP
         excelLbl->setToolTip(QApplication::translate("MainWindow", "Scie\305\274ka przeszukiwania plik\303\263w *.PDF", 0));

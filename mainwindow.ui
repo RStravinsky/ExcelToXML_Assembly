@@ -254,7 +254,7 @@ border-top-left-radius:10px;
 }</string>
           </property>
           <property name="text">
-           <string>\\k1\Produkcja\TECHNOLODZY\BAZA DO TXT\txt\PLA</string>
+           <string>//k1/Produkcja/TECHNOLODZY/BAZA DO TXT/txt/PLA</string>
           </property>
           <property name="readOnly">
            <bool>false</bool>

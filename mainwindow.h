@@ -41,6 +41,7 @@ private:
 
     void createAssemblyCommand(std::unique_ptr<QXmlStreamWriter> &xml, const std::shared_ptr<Assembly> &assembly);
     void createPartCommand(std::unique_ptr<QXmlStreamWriter> &xml, const std::shared_ptr<SinglePart> &part);
+    void createManufacturingCommand(std::unique_ptr<QXmlStreamWriter> &xml, const std::shared_ptr<Part> &part, int &counter);
     void assignPartToAssembly(std::unique_ptr<QXmlStreamWriter> &xml, const QString &assemblyDrawingNumber, const std::shared_ptr<Part> &part);
     void createXMLContent(std::unique_ptr<QXmlStreamWriter> &xml, const QString & assemblyDrawingNumber, QList<std::shared_ptr<Part>> &partsList);
     bool createXML();

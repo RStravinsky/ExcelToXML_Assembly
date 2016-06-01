@@ -108,6 +108,15 @@ void Finder::loadFileList()
             m_partList.push_back(std::move(assembly));
 
         }
+        else if(!partType.isEmpty() && partType == "M") {
+
+            std::shared_ptr<SinglePart> part(std::move(createSinglePart(currentRow)));
+            if(part==nullptr)
+                return;
+            m_partList.push_back(std::move(part));
+            ++currentRow;
+
+        }
         else {
             emit finished(false,"Rysunek w wierszu: " + QString::number(currentRow) + " nie jest złożeniem.");
             return;

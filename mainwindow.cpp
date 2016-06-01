@@ -112,8 +112,8 @@ void MainWindow::on_convertButton_released()
                                  );
 
             msgBox.setWindowIcon(QIcon(":/images/images/icon.ico"));
-            QAbstractButton *myYesButton = msgBox.addButton(trUtf8("DXF+Marszruta"), QMessageBox::NoRole);
-            QAbstractButton *myNoButton = msgBox.addButton(trUtf8("Baza Lantek"), QMessageBox::YesRole);
+            QAbstractButton *myNoButton = msgBox.addButton(trUtf8("DXF+Marszruta"), QMessageBox::NoRole);
+            QAbstractButton *myYesButton = msgBox.addButton(trUtf8("Baza Lantek"), QMessageBox::YesRole);
             msgBox.setButtonText(QMessageBox::Close, tr("Zamknij"));
             msgBox.exec();
 
@@ -366,6 +366,31 @@ void MainWindow::createPartCommand(std::unique_ptr<QXmlStreamWriter> &xml, const
     }
 }
 
+void MainWindow::createManufacturingCommand(std::unique_ptr<QXmlStreamWriter> &xml, const std::shared_ptr<Part> &part, int &counter)
+{
+    QStringList ManufacturingFields;
+    QStringList FldRefFourth(QStringList()  << "MnOID" << "PrdRefDst" << "OrdRef" << "ComName" << "RQ" << "DDate");
+    ManufacturingFields.append(m_finder->getOrderNumber() + "_" + QString::number(counter));// MnIDO
+    ManufacturingFields << part->getDrawingNumber() // PrdRefDst
+                        << m_finder->getOrderNumber() // OrdRef
+                        << m_finder->getClient() // ComName
+                        << QString::number(part->getQuantity()) // RQ
+                        << m_finder->getDeliveryDate(); // DDate
+
+    xml->writeStartElement("COMMAND");
+    xml->writeAttribute("Name","Import");
+    xml->writeAttribute("TblRef","MANUFACTURING"); // MANUFACTURING
+    for(int i=0;i<FldRefFourth.size();++i) {
+        xml->writeStartElement("Field");
+        xml->writeAttribute("FldRef",FldRefFourth[i]);
+        xml->writeAttribute("FldValue",ManufacturingFields[i]); // drawing number ALWAYS
+        xml->writeAttribute("FldType", (i==4) ? "30" : (i==5 ? "120" : "20"));
+        xml->writeEndElement();
+    }
+
+    xml->writeEndElement(); // Command
+}
+
 void MainWindow::assignPartToAssembly(std::unique_ptr<QXmlStreamWriter> &xml, const QString & assemblyDrawingNumber, const std::shared_ptr<Part> &part)
 {
     QStringList fldRef(QStringList() << "PrdRefOrg" << "PrdRefDst" << "PQUANT");
@@ -415,9 +440,26 @@ bool MainWindow::createXML()
     xmlWriter->writeStartDocument();
     xmlWriter->writeStartElement("DATAEX");
 
-    for(auto &assembly: m_finder->getPartList()) {
-        createAssemblyCommand(xmlWriter, assembly);
-        createXMLContent(xmlWriter, assembly->getDrawingNumber(), assembly->getSubpartList());
+    int counter = 1;
+    for(auto &part: m_finder->getPartList()) {
+
+        if(!m_isUpload) {
+            std::shared_ptr<Assembly> assembly = std::dynamic_pointer_cast<Assembly>(part);
+            if(assembly != NULL) {
+                createAssemblyCommand(xmlWriter, std::dynamic_pointer_cast<Assembly>(part));
+                createXMLContent(xmlWriter, part->getDrawingNumber(), std::dynamic_pointer_cast<Assembly>(part)->getSubpartList());
+            }
+            else
+                createPartCommand(xmlWriter,std::dynamic_pointer_cast<SinglePart>(part));
+
+            createManufacturingCommand(xmlWriter,part,counter);
+            ++counter;
+        }
+
+        else {
+            createManufacturingCommand(xmlWriter,part,counter);
+            ++counter;
+        }
     }
 
     xmlWriter->writeEndElement(); // Dataex

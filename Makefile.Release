@@ -46,25 +46,33 @@ OBJECTS_DIR   = release/
 SOURCES       = main.cpp \
 		mainwindow.cpp \
 		finder.cpp \
-		partinfo.cpp release/qrc_resources.cpp \
+		part.cpp \
+		singlepart.cpp \
+		assembly.cpp release/qrc_resources.cpp \
 		release/moc_mainwindow.cpp \
 		release/moc_finder.cpp \
-		release/moc_partinfo.cpp
+		release/moc_part.cpp
 OBJECTS       = release/main.o \
 		release/mainwindow.o \
 		release/finder.o \
-		release/partinfo.o \
+		release/part.o \
+		release/singlepart.o \
+		release/assembly.o \
 		release/qrc_resources.o \
 		release/moc_mainwindow.o \
 		release/moc_finder.o \
-		release/moc_partinfo.o
+		release/moc_part.o
 
 DIST          =  mainwindow.h \
 		finder.h \
-		partinfo.h main.cpp \
+		part.h \
+		singlepart.h \
+		assembly.h main.cpp \
 		mainwindow.cpp \
 		finder.cpp \
-		partinfo.cpp
+		part.cpp \
+		singlepart.cpp \
+		assembly.cpp
 QMAKE_TARGET  = ExcelToXML
 DESTDIR        = release/ #avoid trailing-slash linebreak
 TARGET         = ExcelToXML.exe
@@ -92,13 +100,13 @@ first: all
 all: Makefile.Release  $(DESTDIR_TARGET)
 
 $(DESTDIR_TARGET): ui_mainwindow.h $(OBJECTS) release/ExcelToXML_resource_res.o
-	$(LINKER) $(LFLAGS) -o $(DESTDIR_TARGET) $(OBJECTS)  $(LIBS)
+	$(LINKER) $(LFLAGS) -o $(DESTDIR_TARGET) object_script.ExcelToXML.Release  $(LIBS)
 
 release/ExcelToXML_resource_res.o: ExcelToXML_resource.rc
 	windres -i ExcelToXML_resource.rc -o release/ExcelToXML_resource_res.o --include-dir=. $(DEFINES)
 
 qmake: FORCE
-	@$(QMAKE) -spec win32-g++ CONFIG+=debug -o Makefile.Release ExcelToXML.pro
+	@$(QMAKE) -spec win32-g++ -o Makefile.Release ExcelToXML.pro
 
 qmake_all: FORCE
 
@@ -106,7 +114,7 @@ dist:
 	$(ZIP) ExcelToXML.zip $(SOURCES) $(DIST) ExcelToXML.pro C:/Qt/5.4/mingw491_32/mkspecs/features/spec_pre.prf C:/Qt/5.4/mingw491_32/mkspecs/qdevice.pri C:/Qt/5.4/mingw491_32/mkspecs/features/device_config.prf C:/Qt/5.4/mingw491_32/mkspecs/common/shell-unix.conf C:/Qt/5.4/mingw491_32/mkspecs/qconfig.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_axbase.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_axbase_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_axcontainer.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_axcontainer_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_axserver.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_axserver_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_bluetooth.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_bluetooth_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_bootstrap_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_clucene_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_concurrent.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_concurrent_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_core.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_core_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_dbus.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_dbus_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_declarative.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_declarative_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_designer.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_designer_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_designercomponents_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_enginio.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_enginio_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_gui.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_gui_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_help.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_help_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_location.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_location_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_multimedia.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_multimedia_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_multimediawidgets.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_multimediawidgets_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_network.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_network_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_nfc.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_nfc_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_opengl.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_opengl_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_openglextensions.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_openglextensions_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_platformsupport_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_positioning.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_positioning_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_printsupport.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_printsupport_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_qml.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_qml_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_qmldevtools_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_qmltest.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_qmltest_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_qtmultimediaquicktools_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_quick.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_quick_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_quickparticles_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_quickwidgets.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_quickwidgets_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_script.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_script_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_scripttools.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_scripttools_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_sensors.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_sensors_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_serialport.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_serialport_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_sql.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_sql_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_svg.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_svg_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_testlib.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_testlib_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_uitools.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_uitools_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_webchannel.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_webchannel_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_webkit.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_webkit_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_webkitwidgets.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_webkitwidgets_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_websockets.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_websockets_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_widgets.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_widgets_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_winextras.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_winextras_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_xlsx.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_xlsx_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_xml.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_xml_private.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_xmlpatterns.pri C:/Qt/5.4/mingw491_32/mkspecs/modules/qt_lib_xmlpatterns_private.pri C:/Qt/5.4/mingw491_32/mkspecs/features/qt_functions.prf C:/Qt/5.4/mingw491_32/mkspecs/features/qt_config.prf C:/Qt/5.4/mingw491_32/mkspecs/features/win32/qt_config.prf C:/Qt/5.4/mingw491_32/mkspecs/win32-g++/qmake.conf C:/Qt/5.4/mingw491_32/mkspecs/features/spec_post.prf C:/Qt/5.4/mingw491_32/mkspecs/features/exclusive_builds.prf C:/Qt/5.4/mingw491_32/mkspecs/features/default_pre.prf C:/Qt/5.4/mingw491_32/mkspecs/features/win32/default_pre.prf C:/Qt/5.4/mingw491_32/mkspecs/features/resolve_config.prf C:/Qt/5.4/mingw491_32/mkspecs/features/exclusive_builds_post.prf C:/Qt/5.4/mingw491_32/mkspecs/features/default_post.prf C:/Qt/5.4/mingw491_32/mkspecs/features/build_pass.prf C:/Qt/5.4/mingw491_32/mkspecs/features/c++11.prf C:/Qt/5.4/mingw491_32/mkspecs/features/win32/rtti.prf C:/Qt/5.4/mingw491_32/mkspecs/features/precompile_header.prf C:/Qt/5.4/mingw491_32/mkspecs/features/warn_on.prf C:/Qt/5.4/mingw491_32/mkspecs/features/qt.prf C:/Qt/5.4/mingw491_32/mkspecs/features/resources.prf C:/Qt/5.4/mingw491_32/mkspecs/features/moc.prf C:/Qt/5.4/mingw491_32/mkspecs/features/win32/opengl.prf C:/Qt/5.4/mingw491_32/mkspecs/features/uic.prf C:/Qt/5.4/mingw491_32/mkspecs/features/win32/windows.prf C:/Qt/5.4/mingw491_32/mkspecs/features/testcase_targets.prf C:/Qt/5.4/mingw491_32/mkspecs/features/exceptions.prf C:/Qt/5.4/mingw491_32/mkspecs/features/yacc.prf C:/Qt/5.4/mingw491_32/mkspecs/features/lex.prf ExcelToXML.pro resources.qrc C:/Qt/5.4/mingw491_32/lib/qtmain.prl C:/Qt/5.4/mingw491_32/lib/Qt5Core.prl C:/Qt/5.4/mingw491_32/lib/Qt5Xlsx.prl C:/Qt/5.4/mingw491_32/lib/Qt5Widgets.prl C:/Qt/5.4/mingw491_32/lib/Qt5Gui.prl C:/Qt/5.4/mingw491_32/lib/Qt5Xml.prl  NO_PCH_SOURCES RESOURCES HEADERS SOURCES OBJECTIVE_SOURCES FORMS YACCSOURCES YACCSOURCES LEXSOURCES 
 
 clean: compiler_clean 
-	-$(DEL_FILE) release/main.o release/mainwindow.o release/finder.o release/partinfo.o release/qrc_resources.o release/moc_mainwindow.o release/moc_finder.o release/moc_partinfo.o
+	-$(DEL_FILE) release/main.o release/mainwindow.o release/finder.o release/part.o release/singlepart.o release/assembly.o release/qrc_resources.o release/moc_mainwindow.o release/moc_finder.o release/moc_part.o
 	-$(DEL_FILE) release/ExcelToXML_resource_res.o
 
 distclean: clean 
@@ -134,9 +142,9 @@ release/qrc_resources.cpp: resources.qrc \
 		images/arrow.png
 	'C:\Qt\5.4\mingw491_32\bin\rcc.exe' -name resources resources.qrc -o release/qrc_resources.cpp
 
-compiler_moc_header_make_all: release/moc_mainwindow.cpp release/moc_finder.cpp release/moc_partinfo.cpp
+compiler_moc_header_make_all: release/moc_mainwindow.cpp release/moc_finder.cpp release/moc_part.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) release/moc_mainwindow.cpp release/moc_finder.cpp release/moc_partinfo.cpp
+	-$(DEL_FILE) release/moc_mainwindow.cpp release/moc_finder.cpp release/moc_part.cpp
 release/moc_mainwindow.cpp: C:/Qt/5.4/mingw491_32/include/QtWidgets/QMainWindow \
 		C:/Qt/5.4/mingw491_32/include/QtWidgets/qmainwindow.h \
 		C:/Qt/5.4/mingw491_32/include/QtWidgets/qwidget.h \
@@ -495,9 +503,11 @@ release/moc_mainwindow.cpp: C:/Qt/5.4/mingw491_32/include/QtWidgets/QMainWindow 
 		C:/Qt/5.4/mingw491_32/include/QtCore/QSet \
 		C:/Qt/5.4/mingw491_32/include/QtCore/QMetaType \
 		C:/Qt/5.4/mingw491_32/include/QtCore/QFile \
-		partinfo.h \
+		singlepart.h \
+		part.h \
+		assembly.h \
 		mainwindow.h
-	'C:\Qt\5.4\mingw491_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.4/mingw491_32/mkspecs/win32-g++ -ID:/ProjektyQT/ExcelToXML -IC:/Qt/5.4/mingw491_32/include -IC:/Qt/5.4/mingw491_32/include/QtXlsx -IC:/Qt/5.4/mingw491_32/include/QtWidgets -IC:/Qt/5.4/mingw491_32/include/QtGui -IC:/Qt/5.4/mingw491_32/include/QtXml -IC:/Qt/5.4/mingw491_32/include/QtCore mainwindow.h -o release/moc_mainwindow.cpp
+	'C:\Qt\5.4\mingw491_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.4/mingw491_32/mkspecs/win32-g++ -ID:/ProjektyQT/ExcelToXML_Assembly -IC:/Qt/5.4/mingw491_32/include -IC:/Qt/5.4/mingw491_32/include/QtXlsx -IC:/Qt/5.4/mingw491_32/include/QtWidgets -IC:/Qt/5.4/mingw491_32/include/QtGui -IC:/Qt/5.4/mingw491_32/include/QtXml -IC:/Qt/5.4/mingw491_32/include/QtCore mainwindow.h -o release/moc_mainwindow.cpp
 
 release/moc_finder.cpp: C:/Qt/5.4/mingw491_32/include/QtCore/QObject \
 		C:/Qt/5.4/mingw491_32/include/QtCore/qobject.h \
@@ -839,11 +849,13 @@ release/moc_finder.cpp: C:/Qt/5.4/mingw491_32/include/QtCore/QObject \
 		C:/Qt/5.4/mingw491_32/include/QtCore/QSet \
 		C:/Qt/5.4/mingw491_32/include/QtCore/QMetaType \
 		C:/Qt/5.4/mingw491_32/include/QtCore/QFile \
-		partinfo.h \
+		singlepart.h \
+		part.h \
+		assembly.h \
 		finder.h
-	'C:\Qt\5.4\mingw491_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.4/mingw491_32/mkspecs/win32-g++ -ID:/ProjektyQT/ExcelToXML -IC:/Qt/5.4/mingw491_32/include -IC:/Qt/5.4/mingw491_32/include/QtXlsx -IC:/Qt/5.4/mingw491_32/include/QtWidgets -IC:/Qt/5.4/mingw491_32/include/QtGui -IC:/Qt/5.4/mingw491_32/include/QtXml -IC:/Qt/5.4/mingw491_32/include/QtCore finder.h -o release/moc_finder.cpp
+	'C:\Qt\5.4\mingw491_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.4/mingw491_32/mkspecs/win32-g++ -ID:/ProjektyQT/ExcelToXML_Assembly -IC:/Qt/5.4/mingw491_32/include -IC:/Qt/5.4/mingw491_32/include/QtXlsx -IC:/Qt/5.4/mingw491_32/include/QtWidgets -IC:/Qt/5.4/mingw491_32/include/QtGui -IC:/Qt/5.4/mingw491_32/include/QtXml -IC:/Qt/5.4/mingw491_32/include/QtCore finder.h -o release/moc_finder.cpp
 
-release/moc_partinfo.cpp: C:/Qt/5.4/mingw491_32/include/QtCore/QObject \
+release/moc_part.cpp: C:/Qt/5.4/mingw491_32/include/QtCore/QObject \
 		C:/Qt/5.4/mingw491_32/include/QtCore/qobject.h \
 		C:/Qt/5.4/mingw491_32/include/QtCore/qobjectdefs.h \
 		C:/Qt/5.4/mingw491_32/include/QtCore/qnamespace.h \
@@ -893,15 +905,8 @@ release/moc_partinfo.cpp: C:/Qt/5.4/mingw491_32/include/QtCore/QObject \
 		C:/Qt/5.4/mingw491_32/include/QtCore/qcontainerfwd.h \
 		C:/Qt/5.4/mingw491_32/include/QtCore/qisenum.h \
 		C:/Qt/5.4/mingw491_32/include/QtCore/qobject_impl.h \
-		C:/Qt/5.4/mingw491_32/include/QtCore/QStringList \
-		C:/Qt/5.4/mingw491_32/include/QtCore/qstringlist.h \
-		C:/Qt/5.4/mingw491_32/include/QtCore/qdatastream.h \
-		C:/Qt/5.4/mingw491_32/include/QtCore/qiodevice.h \
-		C:/Qt/5.4/mingw491_32/include/QtCore/qpair.h \
-		C:/Qt/5.4/mingw491_32/include/QtCore/qregexp.h \
-		C:/Qt/5.4/mingw491_32/include/QtCore/qstringmatcher.h \
-		partinfo.h
-	'C:\Qt\5.4\mingw491_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.4/mingw491_32/mkspecs/win32-g++ -ID:/ProjektyQT/ExcelToXML -IC:/Qt/5.4/mingw491_32/include -IC:/Qt/5.4/mingw491_32/include/QtXlsx -IC:/Qt/5.4/mingw491_32/include/QtWidgets -IC:/Qt/5.4/mingw491_32/include/QtGui -IC:/Qt/5.4/mingw491_32/include/QtXml -IC:/Qt/5.4/mingw491_32/include/QtCore partinfo.h -o release/moc_partinfo.cpp
+		part.h
+	'C:\Qt\5.4\mingw491_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.4/mingw491_32/mkspecs/win32-g++ -ID:/ProjektyQT/ExcelToXML_Assembly -IC:/Qt/5.4/mingw491_32/include -IC:/Qt/5.4/mingw491_32/include/QtXlsx -IC:/Qt/5.4/mingw491_32/include/QtWidgets -IC:/Qt/5.4/mingw491_32/include/QtGui -IC:/Qt/5.4/mingw491_32/include/QtXml -IC:/Qt/5.4/mingw491_32/include/QtCore part.h -o release/moc_part.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -1282,7 +1287,9 @@ release/main.o: main.cpp mainwindow.h \
 		C:/Qt/5.4/mingw491_32/include/QtCore/QSet \
 		C:/Qt/5.4/mingw491_32/include/QtCore/QMetaType \
 		C:/Qt/5.4/mingw491_32/include/QtCore/QFile \
-		partinfo.h \
+		singlepart.h \
+		part.h \
+		assembly.h \
 		C:/Qt/5.4/mingw491_32/include/QtWidgets/QApplication \
 		C:/Qt/5.4/mingw491_32/include/QtWidgets/qapplication.h \
 		C:/Qt/5.4/mingw491_32/include/QtWidgets/qdesktopwidget.h
@@ -1647,49 +1654,10 @@ release/mainwindow.o: mainwindow.cpp mainwindow.h \
 		C:/Qt/5.4/mingw491_32/include/QtCore/QSet \
 		C:/Qt/5.4/mingw491_32/include/QtCore/QMetaType \
 		C:/Qt/5.4/mingw491_32/include/QtCore/QFile \
-		partinfo.h \
-		ui_mainwindow.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/QAction \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qaction.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qactiongroup.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/QApplication \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qapplication.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qdesktopwidget.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/QButtonGroup \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qbuttongroup.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/QFrame \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qframe.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/QHBoxLayout \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qboxlayout.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qlayout.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qlayoutitem.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qgridlayout.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/QHeaderView \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qheaderview.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qabstractitemview.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qabstractscrollarea.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qabstractitemdelegate.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qstyleoption.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qabstractspinbox.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qslider.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qabstractslider.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qstyle.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qtabbar.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qrubberband.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/QLabel \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qlabel.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/QLineEdit \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qlineedit.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/QListWidget \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qlistwidget.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qlistview.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/QProgressBar \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qprogressbar.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/QPushButton \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qpushbutton.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/qabstractbutton.h \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/QVBoxLayout \
-		C:/Qt/5.4/mingw491_32/include/QtWidgets/QWidget
+		singlepart.h \
+		part.h \
+		assembly.h \
+		ui_mainwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release/mainwindow.o mainwindow.cpp
 
 release/finder.o: finder.cpp finder.h \
@@ -2033,10 +2001,12 @@ release/finder.o: finder.cpp finder.h \
 		C:/Qt/5.4/mingw491_32/include/QtCore/QSet \
 		C:/Qt/5.4/mingw491_32/include/QtCore/QMetaType \
 		C:/Qt/5.4/mingw491_32/include/QtCore/QFile \
-		partinfo.h
+		singlepart.h \
+		part.h \
+		assembly.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release/finder.o finder.cpp
 
-release/partinfo.o: partinfo.cpp partinfo.h \
+release/part.o: part.cpp part.h \
 		C:/Qt/5.4/mingw491_32/include/QtCore/QObject \
 		C:/Qt/5.4/mingw491_32/include/QtCore/qobject.h \
 		C:/Qt/5.4/mingw491_32/include/QtCore/qobjectdefs.h \
@@ -2086,15 +2056,124 @@ release/partinfo.o: partinfo.cpp partinfo.h \
 		C:/Qt/5.4/mingw491_32/include/QtCore/qvarlengtharray.h \
 		C:/Qt/5.4/mingw491_32/include/QtCore/qcontainerfwd.h \
 		C:/Qt/5.4/mingw491_32/include/QtCore/qisenum.h \
-		C:/Qt/5.4/mingw491_32/include/QtCore/qobject_impl.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qobject_impl.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release/part.o part.cpp
+
+release/singlepart.o: singlepart.cpp singlepart.h \
 		C:/Qt/5.4/mingw491_32/include/QtCore/QStringList \
 		C:/Qt/5.4/mingw491_32/include/QtCore/qstringlist.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qalgorithms.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qglobal.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qconfig.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qfeatures.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qsystemdetection.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qprocessordetection.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qcompilerdetection.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qtypeinfo.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qtypetraits.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qsysinfo.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qlogging.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qflags.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qbasicatomic.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic_bootstrap.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qgenericatomic.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic_msvc.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic_armv7.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic_armv6.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic_armv5.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic_ia64.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic_mips.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic_x86.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic_cxx11.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic_gcc.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic_unix.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qglobalstatic.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qmutex.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qnumeric.h \
 		C:/Qt/5.4/mingw491_32/include/QtCore/qdatastream.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qscopedpointer.h \
 		C:/Qt/5.4/mingw491_32/include/QtCore/qiodevice.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qobject.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qobjectdefs.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qnamespace.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qobjectdefs_impl.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qstring.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qchar.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qbytearray.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qrefcount.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qarraydata.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qstringbuilder.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qlist.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qiterator.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qbytearraylist.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qcoreevent.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qmetatype.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qvarlengtharray.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qcontainerfwd.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qisenum.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qobject_impl.h \
 		C:/Qt/5.4/mingw491_32/include/QtCore/qpair.h \
 		C:/Qt/5.4/mingw491_32/include/QtCore/qregexp.h \
-		C:/Qt/5.4/mingw491_32/include/QtCore/qstringmatcher.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release/partinfo.o partinfo.cpp
+		C:/Qt/5.4/mingw491_32/include/QtCore/qstringmatcher.h \
+		part.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/QObject
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release/singlepart.o singlepart.cpp
+
+release/assembly.o: assembly.cpp assembly.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/QtAlgorithms \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qalgorithms.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qglobal.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qconfig.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qfeatures.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qsystemdetection.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qprocessordetection.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qcompilerdetection.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qtypeinfo.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qtypetraits.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qsysinfo.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qlogging.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qflags.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qbasicatomic.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic_bootstrap.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qgenericatomic.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic_msvc.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic_armv7.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic_armv6.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic_armv5.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic_ia64.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic_mips.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic_x86.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic_cxx11.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic_gcc.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qatomic_unix.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qglobalstatic.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qmutex.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qnumeric.h \
+		part.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/QObject \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qobject.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qobjectdefs.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qnamespace.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qobjectdefs_impl.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qstring.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qchar.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qbytearray.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qrefcount.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qarraydata.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qstringbuilder.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qlist.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qiterator.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qbytearraylist.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qcoreevent.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qscopedpointer.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qmetatype.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qvarlengtharray.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qcontainerfwd.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qisenum.h \
+		C:/Qt/5.4/mingw491_32/include/QtCore/qobject_impl.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release/assembly.o assembly.cpp
 
 release/qrc_resources.o: release/qrc_resources.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release/qrc_resources.o release/qrc_resources.cpp
@@ -2105,8 +2184,8 @@ release/moc_mainwindow.o: release/moc_mainwindow.cpp
 release/moc_finder.o: release/moc_finder.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release/moc_finder.o release/moc_finder.cpp
 
-release/moc_partinfo.o: release/moc_partinfo.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release/moc_partinfo.o release/moc_partinfo.cpp
+release/moc_part.o: release/moc_part.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release/moc_part.o release/moc_part.cpp
 
 ####### Install
 

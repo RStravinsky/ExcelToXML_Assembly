@@ -37,7 +37,7 @@ public:
     }
 
     void abort();
-    QList<std::shared_ptr<Assembly>> & getPartList() { return m_partList; }
+    QList<std::shared_ptr<Part>> & getPartList() { return m_partList; }
     QString getOrderNumber() const { return m_orderNumber; }
     QString getDeliveryDate() const { return m_deliveryDate; }
     QString getClient() const { return m_client; }
@@ -52,7 +52,7 @@ public slots:
 
 private:
     QXlsx::Document * m_schedule;
-    QList<std::shared_ptr<Assembly>> m_partList;
+    QList<std::shared_ptr<Part>> m_partList;
     QString m_schedulePath;
     QString m_searchedFolder;
     bool m_abort;
