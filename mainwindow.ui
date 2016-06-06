@@ -707,7 +707,7 @@ radius: 1.35, stop: 0 #fff, stop: 1 #ddd);
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>350</y>
+      <y>360</y>
       <width>451</width>
       <height>31</height>
      </rect>
@@ -746,9 +746,9 @@ border: 1px solid black;
     <property name="geometry">
      <rect>
       <x>468</x>
-      <y>350</y>
+      <y>360</y>
       <width>141</width>
-      <height>61</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="font">
@@ -800,7 +800,7 @@ background: #A9A9A9 ;
       <x>10</x>
       <y>110</y>
       <width>601</width>
-      <height>231</height>
+      <height>221</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -817,7 +817,7 @@ background: #A9A9A9 ;
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>390</y>
+      <y>400</y>
       <width>341</width>
       <height>20</height>
      </rect>
@@ -855,6 +855,142 @@ font-weight: bold;
      <pixmap resource="resources.qrc">:/images/images/magnifier.png</pixmap>
     </property>
     <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="zCb">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>340</y>
+      <width>61</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>9</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: gray
+</string>
+    </property>
+    <property name="text">
+     <string>Z</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="productsCb">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>340</y>
+      <width>91</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>9</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: gray</string>
+    </property>
+    <property name="text">
+     <string>PRODUCTS</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="prodOperCb">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>340</y>
+      <width>161</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>9</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: gray</string>
+    </property>
+    <property name="text">
+     <string>PRODUCT OPERATIONS</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="importgeoCB">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>340</y>
+      <width>111</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>9</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: gray</string>
+    </property>
+    <property name="text">
+     <string>IMPORTGEO</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="manufacturingCb">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>340</y>
+      <width>131</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>9</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: gray</string>
+    </property>
+    <property name="text">
+     <string>MANUFACTURING</string>
+    </property>
+    <property name="checked">
      <bool>true</bool>
     </property>
    </widget>

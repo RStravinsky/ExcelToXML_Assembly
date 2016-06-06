@@ -244,7 +244,7 @@ bool Finder::rowCount(int & lastRow)
     for (int row = 7; row < 65536; ++row) {
         if(QXlsx::Cell *cell=m_schedule->cellAt(row, 6)) {
             if(cell->value() == QVariant("Masa")) {
-                lastRow = row - 1;
+                lastRow = row - 2;
                 break;
             }
         }

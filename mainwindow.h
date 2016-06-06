@@ -31,19 +31,29 @@ private slots:
     void on_addItemToListWidget(QString itemName, bool isFound);
     void on_processingFinished(bool isSuccess, QString information);
 
+
+    void on_zCb_toggled(bool checked);
+
+    void on_manufacturingCb_toggled(bool checked);
+
+    void on_productsCb_toggled(bool checked);
+
+    void on_prodOperCb_toggled(bool checked);
+
+    void on_importgeoCB_toggled(bool checked);
+
 private:
     Ui::MainWindow *ui;
     QThread * m_finderThread{nullptr};
     Finder * m_finder{nullptr};
     bool m_processing{false};
     bool m_isUpload;
-    void createCommandTag(std::unique_ptr<QXmlStreamWriter> &xml, std::shared_ptr<Part> part, int counter);
 
     void createAssemblyCommand(std::unique_ptr<QXmlStreamWriter> &xml, const std::shared_ptr<Assembly> &assembly);
     void createPartCommand(std::unique_ptr<QXmlStreamWriter> &xml, const std::shared_ptr<SinglePart> &part);
     void createManufacturingCommand(std::unique_ptr<QXmlStreamWriter> &xml, const std::shared_ptr<Part> &part, int &counter);
-    void assignPartToAssembly(std::unique_ptr<QXmlStreamWriter> &xml, const QString &assemblyDrawingNumber, const std::shared_ptr<Part> &part);
-    void createXMLContent(std::unique_ptr<QXmlStreamWriter> &xml, const QString & assemblyDrawingNumber, QList<std::shared_ptr<Part>> &partsList);
+    void assignPartToAssembly(std::unique_ptr<QXmlStreamWriter> &xml, const std::shared_ptr<Assembly> &mainAssembly, const std::shared_ptr<Part> &part);
+    void createXMLContent(std::unique_ptr<QXmlStreamWriter> &xml, const std::shared_ptr<Assembly> &mainAssembly, QList<std::shared_ptr<Part>> &partsList);
     bool createXML();
     QStringList getItemsFromFile(const QString &fileName);
     void generatePartList();

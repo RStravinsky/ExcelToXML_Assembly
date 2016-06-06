@@ -13,6 +13,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
@@ -55,6 +56,11 @@ public:
     QListWidget *listWidget;
     QLabel *statusLabel;
     QLabel *magnifierLbl;
+    QCheckBox *zCb;
+    QCheckBox *productsCb;
+    QCheckBox *prodOperCb;
+    QCheckBox *importgeoCB;
+    QCheckBox *manufacturingCb;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -465,7 +471,7 @@ public:
         descriptionLabel->setFont(font3);
         progressBar = new QProgressBar(centralWidget);
         progressBar->setObjectName(QStringLiteral("progressBar"));
-        progressBar->setGeometry(QRect(10, 350, 451, 31));
+        progressBar->setGeometry(QRect(10, 360, 451, 31));
         progressBar->setMaximumSize(QSize(16777211, 16777215));
         progressBar->setStyleSheet(QLatin1String("QProgressBar {\n"
 "border: 1px solid lightgray;\n"
@@ -486,7 +492,7 @@ public:
         progressBar->setTextVisible(false);
         convertButton = new QPushButton(centralWidget);
         convertButton->setObjectName(QStringLiteral("convertButton"));
-        convertButton->setGeometry(QRect(468, 350, 141, 61));
+        convertButton->setGeometry(QRect(468, 360, 141, 51));
         QFont font4;
         font4.setFamily(QStringLiteral("Arial"));
         font4.setPointSize(11);
@@ -518,13 +524,13 @@ public:
         convertButton->setIconSize(QSize(30, 30));
         listWidget = new QListWidget(centralWidget);
         listWidget->setObjectName(QStringLiteral("listWidget"));
-        listWidget->setGeometry(QRect(10, 110, 601, 231));
+        listWidget->setGeometry(QRect(10, 110, 601, 221));
         listWidget->setStyleSheet(QStringLiteral(""));
         listWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         listWidget->setAlternatingRowColors(true);
         statusLabel = new QLabel(centralWidget);
         statusLabel->setObjectName(QStringLiteral("statusLabel"));
-        statusLabel->setGeometry(QRect(10, 390, 341, 20));
+        statusLabel->setGeometry(QRect(10, 400, 341, 20));
         statusLabel->setStyleSheet(QLatin1String("QLabel {\n"
 "border: none;\n"
 "background: \"transparent\";\n"
@@ -539,6 +545,37 @@ public:
         magnifierLbl->setStyleSheet(QStringLiteral(""));
         magnifierLbl->setPixmap(QPixmap(QString::fromUtf8(":/images/images/magnifier.png")));
         magnifierLbl->setScaledContents(true);
+        zCb = new QCheckBox(centralWidget);
+        zCb->setObjectName(QStringLiteral("zCb"));
+        zCb->setGeometry(QRect(20, 340, 61, 17));
+        zCb->setFont(font);
+        zCb->setStyleSheet(QLatin1String("color: gray\n"
+""));
+        zCb->setChecked(true);
+        productsCb = new QCheckBox(centralWidget);
+        productsCb->setObjectName(QStringLiteral("productsCb"));
+        productsCb->setGeometry(QRect(80, 340, 91, 17));
+        productsCb->setFont(font);
+        productsCb->setStyleSheet(QStringLiteral("color: gray"));
+        productsCb->setChecked(true);
+        prodOperCb = new QCheckBox(centralWidget);
+        prodOperCb->setObjectName(QStringLiteral("prodOperCb"));
+        prodOperCb->setGeometry(QRect(180, 340, 161, 17));
+        prodOperCb->setFont(font);
+        prodOperCb->setStyleSheet(QStringLiteral("color: gray"));
+        prodOperCb->setChecked(true);
+        importgeoCB = new QCheckBox(centralWidget);
+        importgeoCB->setObjectName(QStringLiteral("importgeoCB"));
+        importgeoCB->setGeometry(QRect(350, 340, 111, 17));
+        importgeoCB->setFont(font);
+        importgeoCB->setStyleSheet(QStringLiteral("color: gray"));
+        importgeoCB->setChecked(true);
+        manufacturingCb = new QCheckBox(centralWidget);
+        manufacturingCb->setObjectName(QStringLiteral("manufacturingCb"));
+        manufacturingCb->setGeometry(QRect(460, 340, 131, 20));
+        manufacturingCb->setFont(font);
+        manufacturingCb->setStyleSheet(QStringLiteral("color: gray"));
+        manufacturingCb->setChecked(true);
         MainWindow->setCentralWidget(centralWidget);
 
         retranslateUi(MainWindow);
@@ -596,6 +633,11 @@ public:
         convertButton->setText(QApplication::translate("MainWindow", "Konwertuj", 0));
         statusLabel->setText(QApplication::translate("MainWindow", "<html><head/><body><p><br/></p></body></html>", 0));
         magnifierLbl->setText(QString());
+        zCb->setText(QApplication::translate("MainWindow", "Z", 0));
+        productsCb->setText(QApplication::translate("MainWindow", "PRODUCTS", 0));
+        prodOperCb->setText(QApplication::translate("MainWindow", "PRODUCT OPERATIONS", 0));
+        importgeoCB->setText(QApplication::translate("MainWindow", "IMPORTGEO", 0));
+        manufacturingCb->setText(QApplication::translate("MainWindow", "MANUFACTURING", 0));
     } // retranslateUi
 
 };
