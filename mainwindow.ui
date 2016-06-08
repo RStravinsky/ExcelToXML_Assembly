@@ -254,7 +254,7 @@ border-top-left-radius:10px;
 }</string>
           </property>
           <property name="text">
-           <string>//k1/Produkcja/TECHNOLODZY/BAZA DO TXT/txt/PLA</string>
+           <string>//k1/Produkcja/TECHNOLODZY/BAZA DO TXT/txt</string>
           </property>
           <property name="readOnly">
            <bool>false</bool>
@@ -702,6 +702,19 @@ radius: 1.35, stop: 0 #fff, stop: 1 #ddd);
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; color:#ffffff;&quot;&gt;Konwersja do formatu XML&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="pushButton">
+     <property name="geometry">
+      <rect>
+       <x>450</x>
+       <y>40</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>PushButton</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QProgressBar" name="progressBar">
     <property name="geometry">
@@ -861,9 +874,9 @@ font-weight: bold;
    <widget class="QCheckBox" name="zCb">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>10</x>
       <y>340</y>
-      <width>61</width>
+      <width>81</width>
       <height>17</height>
      </rect>
     </property>
@@ -880,7 +893,7 @@ font-weight: bold;
 </string>
     </property>
     <property name="text">
-     <string>Z</string>
+     <string>ZŁOŻENIA</string>
     </property>
     <property name="checked">
      <bool>true</bool>
@@ -889,9 +902,9 @@ font-weight: bold;
    <widget class="QCheckBox" name="productsCb">
     <property name="geometry">
      <rect>
-      <x>80</x>
+      <x>110</x>
       <y>340</y>
-      <width>91</width>
+      <width>151</width>
       <height>17</height>
      </rect>
     </property>
@@ -907,7 +920,7 @@ font-weight: bold;
      <string notr="true">color: gray</string>
     </property>
     <property name="text">
-     <string>PRODUCTS</string>
+     <string>MATERIAŁ+GRUBOŚĆ</string>
     </property>
     <property name="checked">
      <bool>true</bool>
@@ -916,9 +929,9 @@ font-weight: bold;
    <widget class="QCheckBox" name="prodOperCb">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>270</x>
       <y>340</y>
-      <width>161</width>
+      <width>101</width>
       <height>17</height>
      </rect>
     </property>
@@ -934,7 +947,7 @@ font-weight: bold;
      <string notr="true">color: gray</string>
     </property>
     <property name="text">
-     <string>PRODUCT OPERATIONS</string>
+     <string>MARSZRUTA</string>
     </property>
     <property name="checked">
      <bool>true</bool>
@@ -943,9 +956,9 @@ font-weight: bold;
    <widget class="QCheckBox" name="importgeoCB">
     <property name="geometry">
      <rect>
-      <x>350</x>
+      <x>380</x>
       <y>340</y>
-      <width>111</width>
+      <width>51</width>
       <height>17</height>
      </rect>
     </property>
@@ -961,7 +974,7 @@ font-weight: bold;
      <string notr="true">color: gray</string>
     </property>
     <property name="text">
-     <string>IMPORTGEO</string>
+     <string>DXF</string>
     </property>
     <property name="checked">
      <bool>true</bool>
@@ -970,9 +983,9 @@ font-weight: bold;
    <widget class="QCheckBox" name="manufacturingCb">
     <property name="geometry">
      <rect>
-      <x>460</x>
+      <x>440</x>
       <y>340</y>
-      <width>131</width>
+      <width>171</width>
       <height>20</height>
      </rect>
     </property>
@@ -988,7 +1001,7 @@ font-weight: bold;
      <string notr="true">color: gray</string>
     </property>
     <property name="text">
-     <string>MANUFACTURING</string>
+     <string>ZLECENIE NA PRODUKCJĘ</string>
     </property>
     <property name="checked">
      <bool>true</bool>

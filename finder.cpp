@@ -170,6 +170,12 @@ std::shared_ptr<Assembly> Finder::createAssembly(int &currentRow)
 {
     QString number = m_schedule->cellAt(currentRow, 2)->value().toString().replace(".","");
 
+    QString assemblyName = m_schedule->cellAt(currentRow, 4)->value().toString();
+    if(assemblyName.isEmpty()){
+        emit finished(false,"Brak nazwy zespołu w wierszu " + QString::number(currentRow) + ".");
+        return nullptr;
+    }
+
     QString drawingNumber = m_schedule->cellAt(currentRow, 3)->value().toString();
     if(drawingNumber.isEmpty()){
         emit finished(false,"Brak nazwy rysunku w wierszu " + QString::number(currentRow) + ".");
@@ -188,7 +194,7 @@ std::shared_ptr<Assembly> Finder::createAssembly(int &currentRow)
         return nullptr;
     }
 
-    std::shared_ptr<Assembly> assembly = std::make_shared<Assembly>(number, drawingNumber, quantity, weight);
+    std::shared_ptr<Assembly> assembly = std::make_shared<Assembly>(number, drawingNumber, assemblyName, quantity, weight);
     assembly->setSubPartList(makeAssemblyList(number,++currentRow));
 
     return assembly;
@@ -244,7 +250,7 @@ bool Finder::rowCount(int & lastRow)
     for (int row = 7; row < 65536; ++row) {
         if(QXlsx::Cell *cell=m_schedule->cellAt(row, 6)) {
             if(cell->value() == QVariant("Masa")) {
-                lastRow = row - 2;
+                lastRow = row - 1;
                 break;
             }
         }

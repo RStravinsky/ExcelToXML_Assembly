@@ -90,7 +90,7 @@ void MainWindow::on_convertButton_released()
             return;
         }
         else {
-            QMessageBox msgBox(QMessageBox::Question, tr("Opcje pliku XML"), tr("<font face=""Calibri"" size=""3"" color=""gray"">Wybierz jedną z opcji:</font>"), QMessageBox::Close);
+            QMessageBox msgBox(QMessageBox::Question, tr("Czy na pewno chcesz konwertować ?"), tr(""), QMessageBox::Close);
             msgBox.setStyleSheet("QMessageBox {background: white;}"
                                  "QPushButton {"
                                  "color: gray;"
@@ -112,16 +112,12 @@ void MainWindow::on_convertButton_released()
                                  );
 
             msgBox.setWindowIcon(QIcon(":/images/images/icon.ico"));
-            QAbstractButton *myNoButton = msgBox.addButton(trUtf8("DXF+Marszruta"), QMessageBox::NoRole);
-            QAbstractButton *myYesButton = msgBox.addButton(trUtf8("Baza Lantek"), QMessageBox::YesRole);
+            QAbstractButton *myYesButton = msgBox.addButton(trUtf8("Konwertuj"), QMessageBox::YesRole);
             msgBox.setButtonText(QMessageBox::Close, tr("Zamknij"));
             msgBox.exec();
 
-            if(msgBox.clickedButton() == myNoButton)
-                m_isUpload = false;
-            else if (msgBox.clickedButton() == myYesButton)
-                m_isUpload = true;
-            else return;
+            if (msgBox.clickedButton() != myYesButton)
+                return;
 
             if(createXML()){
                 QMessageBox::information(this, tr("Informacja"), QString("Wygenerowano plik XML."));
@@ -142,12 +138,12 @@ void MainWindow::on_convertButton_released()
 
 void MainWindow::createAssemblyCommand(std::unique_ptr<QXmlStreamWriter> &xml, const std::shared_ptr<Assembly> &assembly)
 {
-    QStringList fldRef( QStringList() << "PrdRef" << "PrdName" << "PCATEGORY" << "Assembly" << "Waga1Szt");
+    QStringList fldRef( QStringList() << "PrdRef" << "PrdName" << "PCATEGORY" << "Assembly");
     QStringList assemblyFields( QStringList() << assembly->getDrawingNumber() // PrdRef
-                                              << "COLUMN/SLUP" // PrdName
+                                              << assembly->getAssemblyName() // PrdName
                                               << "2" // PCATEGORY
-                                              << "1" // Assembly
-                                              << QString::number(assembly->getWeight())); // Waga1Szt
+                                              << "1"); // Assembly
+
     xml->writeStartElement("COMMAND");
     xml->writeAttribute("Name","Import");
     xml->writeAttribute("TblRef","PRODUCTS");
@@ -166,9 +162,13 @@ void MainWindow::createPartCommand(std::unique_ptr<QXmlStreamWriter> &xml, const
     QStringList fldRefFirst(QStringList()  << "PrdRef" << "PrdRef" << "Product");
     QStringList fldRefSecond(QStringList() << "MatRef" << "WrkRef" << "GeometryType");
     QStringList fldRefThird(QStringList()  << "Height" << "OprRef" << "GeometryPath");
-    QStringList tblRef(QStringList() << "PRODUCTS" << "PRODUCT OPERATIONS" << "IMPORTGEO" << "MANUFACTURING");
+    QStringList tblRef(QStringList() << "PRODUCTS" << "PRODUCT OPERATIONS" << "IMPORTGEO");
 
     for(int i=0;i<3;++i) {
+
+        if(!m_isProducts && i==0) continue;
+        if(!m_isProdOper && i==1) continue;
+        if(!m_isImportgeo && i==2) continue;
 
         int count = 1;
         if(i==1)
@@ -258,22 +258,24 @@ void MainWindow::assignPartToAssembly(std::unique_ptr<QXmlStreamWriter> &xml, co
     xml->writeEndElement(); // Command
 }
 
-void MainWindow::createXMLContent(std::unique_ptr<QXmlStreamWriter> &xml, const std::shared_ptr<Assembly> &mainAssembly, QList<std::shared_ptr<Part> > &partsList)
+void MainWindow::createXMLContent(std::unique_ptr<QXmlStreamWriter> &xml, const std::shared_ptr<Assembly> &mainAssembly, QList<std::shared_ptr<Part> > &partsList, int &counter)
 {
     for(auto &part: partsList) {
         std::shared_ptr<Assembly> assembly = std::dynamic_pointer_cast<Assembly>(part);
         if(assembly==nullptr) { // SinglePart
             createPartCommand(xml,std::dynamic_pointer_cast<SinglePart>(part));
+            if(!m_isZ && m_isManufacturing) { ++counter; createManufacturingCommand(xml,part,counter); }
         }
         else { // Assembly
-            createAssemblyCommand(xml, assembly);
-            createXMLContent(xml, assembly, assembly->getSubpartList());
+            if(m_isZ) createAssemblyCommand(xml, assembly);
+            createXMLContent(xml, assembly, assembly->getSubpartList(),counter);
+//            if(assembly->getSubpartList().empty()){
+
+//            }
         }
 
-        assignPartToAssembly(xml, mainAssembly, part);
-    }
-
-
+        if(m_isZ) assignPartToAssembly(xml, mainAssembly, part);
+    } 
 }
 
 bool MainWindow::createXML()
@@ -293,21 +295,19 @@ bool MainWindow::createXML()
     int counter = 1;
     for(auto &part: m_finder->getPartList()) {
 
-        if(!m_isUpload) {
-            std::shared_ptr<Assembly> assembly = std::dynamic_pointer_cast<Assembly>(part);
-            if(assembly != nullptr) {
-                createAssemblyCommand(xmlWriter, assembly);
-                createXMLContent(xmlWriter, assembly, assembly->getSubpartList());
-            }
-            else
-                createPartCommand(xmlWriter,std::dynamic_pointer_cast<SinglePart>(part));
+        std::shared_ptr<Assembly> assembly = std::dynamic_pointer_cast<Assembly>(part);
+        if(assembly != nullptr) {
+            if(m_isZ) createAssemblyCommand(xmlWriter, assembly);
+            createXMLContent(xmlWriter, assembly, assembly->getSubpartList(),counter);
+//            if(assembly->getSubpartList().empty()){
 
-            createManufacturingCommand(xmlWriter,part,counter);
+//            }
+            if(m_isManufacturing && m_isZ) createManufacturingCommand(xmlWriter,part,counter);
             ++counter;
         }
-
         else {
-            createManufacturingCommand(xmlWriter,part,counter);
+            createPartCommand(xmlWriter,std::dynamic_pointer_cast<SinglePart>(part));
+            if(m_isManufacturing) createManufacturingCommand(xmlWriter,part,counter);
             ++counter;
         }
     }
@@ -404,30 +404,65 @@ QStringList MainWindow::getItemsFromFile(const QString &fileName)
 }
 
 
-
-
-
 void MainWindow::on_zCb_toggled(bool checked)
 {
-
+    m_isZ = checked;
 }
 
 void MainWindow::on_productsCb_toggled(bool checked)
 {
-
+    m_isProducts = checked;
 }
 
 void MainWindow::on_prodOperCb_toggled(bool checked)
 {
-
+    m_isProdOper = checked;
 }
 
 void MainWindow::on_importgeoCB_toggled(bool checked)
 {
-
+    m_isImportgeo = checked;
 }
 
 void MainWindow::on_manufacturingCb_toggled(bool checked)
 {
+    m_isManufacturing = checked;
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    QDomDocument doc("mydocument");
+    QFile file(ui->xmlPathLe->text());
+    if (!file.open(QIODevice::ReadOnly))
+        return;
+    if (!doc.setContent(&file)) {
+        file.close();
+        return;
+    }
+    file.close();
+
+    QDomNodeList nodes = doc.elementsByTagName("COMMAND");
+    QDomNode node = nodes.at(nodes.size()-1);
+    QDomElement child = node.toElement();
+    node.removeChild(child);
+//    for (int i = 0; i < nodes.count(); ++i)
+//    {
+//        QDomNode node = nodes.at(i);
+//        QDomElement child = node.firstChildElement("child");
+//        if (!child.isNull() && child.attribute("id") == "0")
+//        {
+//            node.removeChild(child);
+//        }
+//    }
+
+    QString newXml = doc.toString();
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        return;
+
+    QTextStream out(&file);
+    out << newXml;
+
+    file.close();
+
 
 }

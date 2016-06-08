@@ -51,6 +51,7 @@ public:
     QLabel *logoLabel;
     QLabel *nameLabel;
     QLabel *descriptionLabel;
+    QPushButton *pushButton;
     QProgressBar *progressBar;
     QPushButton *convertButton;
     QListWidget *listWidget;
@@ -469,6 +470,9 @@ public:
         font3.setBold(false);
         font3.setWeight(50);
         descriptionLabel->setFont(font3);
+        pushButton = new QPushButton(topFrame);
+        pushButton->setObjectName(QStringLiteral("pushButton"));
+        pushButton->setGeometry(QRect(450, 40, 75, 23));
         progressBar = new QProgressBar(centralWidget);
         progressBar->setObjectName(QStringLiteral("progressBar"));
         progressBar->setGeometry(QRect(10, 360, 451, 31));
@@ -547,32 +551,32 @@ public:
         magnifierLbl->setScaledContents(true);
         zCb = new QCheckBox(centralWidget);
         zCb->setObjectName(QStringLiteral("zCb"));
-        zCb->setGeometry(QRect(20, 340, 61, 17));
+        zCb->setGeometry(QRect(10, 340, 81, 17));
         zCb->setFont(font);
         zCb->setStyleSheet(QLatin1String("color: gray\n"
 ""));
         zCb->setChecked(true);
         productsCb = new QCheckBox(centralWidget);
         productsCb->setObjectName(QStringLiteral("productsCb"));
-        productsCb->setGeometry(QRect(80, 340, 91, 17));
+        productsCb->setGeometry(QRect(110, 340, 151, 17));
         productsCb->setFont(font);
         productsCb->setStyleSheet(QStringLiteral("color: gray"));
         productsCb->setChecked(true);
         prodOperCb = new QCheckBox(centralWidget);
         prodOperCb->setObjectName(QStringLiteral("prodOperCb"));
-        prodOperCb->setGeometry(QRect(180, 340, 161, 17));
+        prodOperCb->setGeometry(QRect(270, 340, 101, 17));
         prodOperCb->setFont(font);
         prodOperCb->setStyleSheet(QStringLiteral("color: gray"));
         prodOperCb->setChecked(true);
         importgeoCB = new QCheckBox(centralWidget);
         importgeoCB->setObjectName(QStringLiteral("importgeoCB"));
-        importgeoCB->setGeometry(QRect(350, 340, 111, 17));
+        importgeoCB->setGeometry(QRect(380, 340, 51, 17));
         importgeoCB->setFont(font);
         importgeoCB->setStyleSheet(QStringLiteral("color: gray"));
         importgeoCB->setChecked(true);
         manufacturingCb = new QCheckBox(centralWidget);
         manufacturingCb->setObjectName(QStringLiteral("manufacturingCb"));
-        manufacturingCb->setGeometry(QRect(460, 340, 131, 20));
+        manufacturingCb->setGeometry(QRect(440, 340, 171, 20));
         manufacturingCb->setFont(font);
         manufacturingCb->setStyleSheet(QStringLiteral("color: gray"));
         manufacturingCb->setChecked(true);
@@ -596,7 +600,7 @@ public:
 #ifndef QT_NO_WHATSTHIS
         searchPathLe->setWhatsThis(QString());
 #endif // QT_NO_WHATSTHIS
-        searchPathLe->setText(QApplication::translate("MainWindow", "//k1/Produkcja/TECHNOLODZY/BAZA DO TXT/txt/PLA", 0));
+        searchPathLe->setText(QApplication::translate("MainWindow", "//k1/Produkcja/TECHNOLODZY/BAZA DO TXT/txt", 0));
         searchPathBtn->setText(QApplication::translate("MainWindow", "...", 0));
 #ifndef QT_NO_TOOLTIP
         excelLbl->setToolTip(QApplication::translate("MainWindow", "Scie\305\274ka przeszukiwania plik\303\263w *.PDF", 0));
@@ -630,14 +634,15 @@ public:
         logoLabel->setText(QString());
         nameLabel->setText(QString());
         descriptionLabel->setText(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:8pt; color:#ffffff;\">Konwersja do formatu XML</span></p></body></html>", 0));
+        pushButton->setText(QApplication::translate("MainWindow", "PushButton", 0));
         convertButton->setText(QApplication::translate("MainWindow", "Konwertuj", 0));
         statusLabel->setText(QApplication::translate("MainWindow", "<html><head/><body><p><br/></p></body></html>", 0));
         magnifierLbl->setText(QString());
-        zCb->setText(QApplication::translate("MainWindow", "Z", 0));
-        productsCb->setText(QApplication::translate("MainWindow", "PRODUCTS", 0));
-        prodOperCb->setText(QApplication::translate("MainWindow", "PRODUCT OPERATIONS", 0));
-        importgeoCB->setText(QApplication::translate("MainWindow", "IMPORTGEO", 0));
-        manufacturingCb->setText(QApplication::translate("MainWindow", "MANUFACTURING", 0));
+        zCb->setText(QApplication::translate("MainWindow", "Z\305\201O\305\273ENIA", 0));
+        productsCb->setText(QApplication::translate("MainWindow", "MATERIA\305\201+GRUBO\305\232\304\206", 0));
+        prodOperCb->setText(QApplication::translate("MainWindow", "MARSZRUTA", 0));
+        importgeoCB->setText(QApplication::translate("MainWindow", "DXF", 0));
+        manufacturingCb->setText(QApplication::translate("MainWindow", "ZLECENIE NA PRODUKCJ\304\230", 0));
     } // retranslateUi
 
 };
